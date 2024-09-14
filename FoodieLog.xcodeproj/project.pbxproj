@@ -13,7 +13,27 @@
 		990790342C931BFB0066920B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 990790332C931BFB0066920B /* .gitignore */; };
 		990790372C931C4B0066920B /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990790362C931C4B0066920B /* APIKey.swift */; };
 		9907903F2C9321F80066920B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9907903E2C9321F80066920B /* HomeView.swift */; };
+		990790412C9322CF0066920B /* FoodCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990790402C9322CF0066920B /* FoodCardView.swift */; };
+		990790472C94011F0066920B /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 990790462C94011F0066920B /* RealmSwift */; };
+		9907904B2C94031E0066920B /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9907904A2C94031E0066920B /* MapView.swift */; };
+		9907904C2C9404ED0066920B /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 990790462C94011F0066920B /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		990790592C9568060066920B /* KakaoMapsSDK-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 990790582C9568060066920B /* KakaoMapsSDK-SPM */; };
+		9907905C2C9584B60066920B /* SearchKakaoPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9907905B2C9584B60066920B /* SearchKakaoPlace.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9907904D2C9404ED0066920B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9907904C2C9404ED0066920B /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		990790222C931AF00066920B /* FoodieLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodieLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -23,6 +43,10 @@
 		990790332C931BFB0066920B /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		990790362C931C4B0066920B /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		9907903E2C9321F80066920B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		990790402C9322CF0066920B /* FoodCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodCardView.swift; sourceTree = "<group>"; };
+		9907904A2C94031E0066920B /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		990790532C955CAE0066920B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9907905B2C9584B60066920B /* SearchKakaoPlace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchKakaoPlace.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -30,6 +54,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				990790472C94011F0066920B /* RealmSwift in Frameworks */,
+				990790592C9568060066920B /* KakaoMapsSDK-SPM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,9 +82,11 @@
 		990790242C931AF00066920B /* FoodieLog */ = {
 			isa = PBXGroup;
 			children = (
+				9907905A2C95844A0066920B /* Model */,
 				990790352C931C110066920B /* Security */,
 				990790382C931C930066920B /* Views */,
 				990790252C931AF00066920B /* FoodieLogApp.swift */,
+				990790532C955CAE0066920B /* Info.plist */,
 				990790292C931AF10066920B /* Assets.xcassets */,
 				9907902B2C931AF10066920B /* Preview Content */,
 			);
@@ -84,9 +112,27 @@
 		990790382C931C930066920B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				990790492C94030D0066920B /* KakaoMap */,
 				9907903E2C9321F80066920B /* HomeView.swift */,
+				990790402C9322CF0066920B /* FoodCardView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		990790492C94030D0066920B /* KakaoMap */ = {
+			isa = PBXGroup;
+			children = (
+				9907904A2C94031E0066920B /* MapView.swift */,
+			);
+			path = KakaoMap;
+			sourceTree = "<group>";
+		};
+		9907905A2C95844A0066920B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				9907905B2C9584B60066920B /* SearchKakaoPlace.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -99,12 +145,17 @@
 				9907901E2C931AF00066920B /* Sources */,
 				9907901F2C931AF00066920B /* Frameworks */,
 				990790202C931AF00066920B /* Resources */,
+				9907904D2C9404ED0066920B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = FoodieLog;
+			packageProductDependencies = (
+				990790462C94011F0066920B /* RealmSwift */,
+				990790582C9568060066920B /* KakaoMapsSDK-SPM */,
+			);
 			productName = FoodieLog;
 			productReference = 990790222C931AF00066920B /* FoodieLog.app */;
 			productType = "com.apple.product-type.application";
@@ -133,6 +184,10 @@
 				Base,
 			);
 			mainGroup = 990790192C931AF00066920B;
+			packageReferences = (
+				990790452C94011F0066920B /* XCRemoteSwiftPackageReference "realm-swift" */,
+				990790572C9568060066920B /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */,
+			);
 			productRefGroup = 990790232C931AF00066920B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -161,7 +216,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				9907903F2C9321F80066920B /* HomeView.swift in Sources */,
+				9907904B2C94031E0066920B /* MapView.swift in Sources */,
 				990790372C931C4B0066920B /* APIKey.swift in Sources */,
+				9907905C2C9584B60066920B /* SearchKakaoPlace.swift in Sources */,
+				990790412C9322CF0066920B /* FoodCardView.swift in Sources */,
 				990790262C931AF00066920B /* FoodieLogApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,11 +357,11 @@
 				DEVELOPMENT_TEAM = Y2VDXSZQ3M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FoodieLog/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -334,11 +392,11 @@
 				DEVELOPMENT_TEAM = Y2VDXSZQ3M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FoodieLog/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -380,6 +438,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		990790452C94011F0066920B /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = exactVersion;
+				version = 20.0.0;
+			};
+		};
+		990790572C9568060066920B /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao-mapsSDK/KakaoMapsSDK-SPM.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.10.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		990790462C94011F0066920B /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 990790452C94011F0066920B /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		990790582C9568060066920B /* KakaoMapsSDK-SPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 990790572C9568060066920B /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */;
+			productName = "KakaoMapsSDK-SPM";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9907901A2C931AF00066920B /* Project object */;
 }
