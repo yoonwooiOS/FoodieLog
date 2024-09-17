@@ -3,11 +3,10 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=swift
 
 APIKey.swift
-
 .DS_Store
 
 GoogleService-Info.plist
-
+Info.plist
 
 ### Swift ###
 # Xcode

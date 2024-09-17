@@ -19,6 +19,7 @@
 		9907904C2C9404ED0066920B /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 990790462C94011F0066920B /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		990790592C9568060066920B /* KakaoMapsSDK-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 990790582C9568060066920B /* KakaoMapsSDK-SPM */; };
 		9907905C2C9584B60066920B /* SearchKakaoPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9907905B2C9584B60066920B /* SearchKakaoPlace.swift */; };
+		99F132AB2C987469001A63A1 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F132AA2C987469001A63A1 /* HomeTabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +48,7 @@
 		9907904A2C94031E0066920B /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		990790532C955CAE0066920B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9907905B2C9584B60066920B /* SearchKakaoPlace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchKakaoPlace.swift; sourceTree = "<group>"; };
+		99F132AA2C987469001A63A1 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,8 +84,9 @@
 		990790242C931AF00066920B /* FoodieLog */ = {
 			isa = PBXGroup;
 			children = (
-				9907905A2C95844A0066920B /* Model */,
 				990790352C931C110066920B /* Security */,
+				9907905A2C95844A0066920B /* Model */,
+				99F132A92C98745E001A63A1 /* TabView */,
 				990790382C931C930066920B /* Views */,
 				990790252C931AF00066920B /* FoodieLogApp.swift */,
 				990790532C955CAE0066920B /* Info.plist */,
@@ -133,6 +136,14 @@
 				9907905B2C9584B60066920B /* SearchKakaoPlace.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		99F132A92C98745E001A63A1 /* TabView */ = {
+			isa = PBXGroup;
+			children = (
+				99F132AA2C987469001A63A1 /* HomeTabView.swift */,
+			);
+			path = TabView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,6 +230,7 @@
 				9907904B2C94031E0066920B /* MapView.swift in Sources */,
 				990790372C931C4B0066920B /* APIKey.swift in Sources */,
 				9907905C2C9584B60066920B /* SearchKakaoPlace.swift in Sources */,
+				99F132AB2C987469001A63A1 /* HomeTabView.swift in Sources */,
 				990790412C9322CF0066920B /* FoodCardView.swift in Sources */,
 				990790262C931AF00066920B /* FoodieLogApp.swift in Sources */,
 			);
