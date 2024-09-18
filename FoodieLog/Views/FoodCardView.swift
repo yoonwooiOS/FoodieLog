@@ -36,6 +36,7 @@ struct FoodCardView: View {
                             Image(systemName: "star")
                                 .foregroundColor(.orange)
                         }
+                        Spacer()
                     }
                     .padding(10)
                     .background(Color.white)

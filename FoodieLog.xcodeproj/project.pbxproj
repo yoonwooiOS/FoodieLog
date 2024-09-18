@@ -86,7 +86,6 @@
 			children = (
 				990790352C931C110066920B /* Security */,
 				9907905A2C95844A0066920B /* Model */,
-				99F132A92C98745E001A63A1 /* TabView */,
 				990790382C931C930066920B /* Views */,
 				990790252C931AF00066920B /* FoodieLogApp.swift */,
 				990790532C955CAE0066920B /* Info.plist */,
@@ -115,6 +114,7 @@
 		990790382C931C930066920B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				99F132A92C98745E001A63A1 /* TabView */,
 				990790492C94030D0066920B /* KakaoMap */,
 				9907903E2C9321F80066920B /* HomeView.swift */,
 				990790402C9322CF0066920B /* FoodCardView.swift */,
