@@ -12,14 +12,14 @@ struct SearchKakaoPlace: Decodable {
        let meta: KakaoPlaceMeta
    }
 
-   struct KakaoPlace: Decodable {
+   struct KakaoPlace: Decodable, Identifiable {
        let address_name: String
        let category_group_code: String
        let category_group_name: String
        let category_name: String
        let distance: String
        let id: String
-       let phone: String
+       let phone: String?
        let place_name: String
        let place_url: String
        let road_address_name: String
@@ -36,7 +36,7 @@ struct SearchKakaoPlace: Decodable {
 
    struct KakaoPlaceSameName: Decodable {
        let keyword: String
-       let region: [String]
-       let selected_region: String
+       let region: [String]?
+       let selected_region: String?
    }
 
