@@ -7,12 +7,12 @@
 
 import SwiftUI
 
+
 struct HomeTabView: View {
     @State private var selectedTab = 0
-    
     var body: some View {
         TabView(selection: $selectedTab) {
-            FoodCardView()
+           HomeView()
                 .tabItem {
                     Image(systemName: selectedTab == 0 ? "house.fill" : "house")
                         .foregroundColor(selectedTab == 0 ? Color.blue : Color.gray)
@@ -27,8 +27,8 @@ struct HomeTabView: View {
                     Text("")
                 }
                 .tag(1)
-    
-            Text("Folder View")
+            
+            CalenderView()
                 .tabItem {
                     Image(systemName: "calendar")
                         .foregroundColor(selectedTab == 2 ? Color.blue : Color.gray)
