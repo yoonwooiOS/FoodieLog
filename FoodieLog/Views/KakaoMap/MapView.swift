@@ -8,27 +8,68 @@
 import SwiftUI
 import KakaoMapsSDK
 
-struct ContentView: View {
-    @State var draw: Bool = false
+struct MapView: View {
+    @State private var searchText = ""
+    @State private var draw: Bool = false
+    @State private var places: [Place] = []
+    @State private var selectedPlace: Place?
+    
     var body: some View {
-        KakaoMapView(draw: $draw).onAppear(perform: {
-                self.draw = true
-            }).onDisappear(perform: {
-                self.draw = false
-            }).frame(maxWidth: .infinity, maxHeight: .infinity)
+        NavigationStack {
+            VStack {
+                KakaoMapView(draw: $draw, selectedPlace: $selectedPlace)
+                    .onAppear {
+                        self.draw = true
+                    }
+                    .onDisappear {
+                        self.draw = false
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationTitle("음식점 검색")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+    }
+    private func fetchPlaces(for query: String) {
+        guard !query.isEmpty else {
+            places = []
+            return
+        }
+        
+        let urlString = "https://api.example.com/search?query=\(query)"
+        guard let url = URL(string: urlString) else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error fetching places: \(error)")
+                return
+            }
+            guard let data = data else { return }
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode([Place].self, from: data)
+                DispatchQueue.main.async {
+                    places = decodedResponse // 가져온 장소 데이터를 업데이트
+                }
+            } catch {
+                print("Error decoding response: \(error)")
+            }
+        }.resume()
     }
 }
+
+
 struct KakaoMapView: UIViewRepresentable {
     @Binding var draw: Bool
-    
+    @Binding var selectedPlace: Place?
     func makeUIView(context: Self.Context) -> KMViewContainer {
         let view: KMViewContainer = KMViewContainer(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
-
+        
         context.coordinator.createController(view)
         
         return view
     }
-
+    
     func updateUIView(_ uiView: KMViewContainer, context: Self.Context) {
         if draw {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -50,7 +91,7 @@ struct KakaoMapView: UIViewRepresentable {
     func makeCoordinator() -> KakaoMapCoordinator {
         return KakaoMapCoordinator()
     }
-
+    
     static func dismantleUIView(_ uiView: KMViewContainer, coordinator: KakaoMapCoordinator) {
         
     }
@@ -104,4 +145,8 @@ struct KakaoMapView: UIViewRepresentable {
         var first: Bool
         var auth: Bool
     }
+}
+
+#Preview {
+    MapView()
 }
