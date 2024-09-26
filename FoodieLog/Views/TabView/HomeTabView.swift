@@ -20,7 +20,7 @@ struct HomeTabView: View {
                 }
                 .tag(0)
             
-            Text("Search View")
+            AddPostView()
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(selectedTab == 1 ? Color.blue : Color.gray)
@@ -36,9 +36,9 @@ struct HomeTabView: View {
                 }
                 .tag(2)
             
-            Text("Profile View")
+            Text("Chart View")
                 .tabItem {
-                    Image(systemName: "person")
+                    Image(systemName: "chart.pie")
                         .foregroundColor(selectedTab == 3 ? Color.blue : Color.gray)
                     Text("")
                 }
