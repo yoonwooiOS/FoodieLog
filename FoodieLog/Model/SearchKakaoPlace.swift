@@ -12,7 +12,7 @@ struct SearchKakaoPlace: Decodable {
        let meta: KakaoPlaceMeta
    }
 
-   struct KakaoPlace: Decodable, Identifiable {
+   struct KakaoPlace: Decodable, Identifiable, Equatable {
        let address_name: String
        let category_group_code: String
        let category_group_name: String

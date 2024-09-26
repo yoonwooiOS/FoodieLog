@@ -7,11 +7,11 @@
 
 import CoreLocation
 
-final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+final class LocationManager: NSObject, ObservableObject {
+    @Published var location: CLLocation?
+    @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
+
     private let locationManager = CLLocationManager()
-    
-    @Published var location: CLLocation? = nil
-    @Published var authorizationStatus: CLAuthorizationStatus? = nil
 
     override init() {
         super.init()
@@ -20,21 +20,26 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         locationManager.requestWhenInUseAuthorization()
     }
 
+    func requestLocationPermission() {
+        locationManager.requestWhenInUseAuthorization()
+    }
+
     func startUpdatingLocation() {
         locationManager.startUpdatingLocation()
     }
+}
 
+extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        self.authorizationStatus = status
+        authorizationStatus = status
         if status == .authorizedWhenInUse || status == .authorizedAlways {
-            locationManager.startUpdatingLocation()
+            startUpdatingLocation()
+        } else {
+            location = nil
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
-            self.location = location
-            locationManager.stopUpdatingLocation()
-        }
+        location = locations.first
     }
 }
