@@ -10,7 +10,6 @@ import SwiftUI
 struct FoodCardView: View {
     var body: some View {
         ZStack {
-            // 배경 이미지
             Image("Sancheong")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -25,6 +24,7 @@ struct FoodCardView: View {
                                 .font(.caption)
                                 .foregroundColor(.gray)
                             Text("산청가든")
+                                .foregroundStyle(.black)
                                 .font(.headline)
                             Spacer()
                         }

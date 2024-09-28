@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HorizontalFoodScrollView: View {
+struct HorizontalScrollView: View {
     let items = Array(0..<5)
     @State private var currentIndex: Int = 0
     @State private var offset: CGFloat = 0
@@ -16,30 +16,27 @@ struct HorizontalFoodScrollView: View {
     var body: some View {
         GeometryReader { geometry in
             HStack(spacing: 0) {
-                ForEach(items.indices, id: \.self) { index in
+                ForEach(items, id: \.self) { index in
                     FoodCardView()
                         .frame(width: geometry.size.width * 0.9)
                         .padding(.horizontal, geometry.size.width * 0.05)
                 }
             }
             .offset(x: -CGFloat(currentIndex) * geometry.size.width + offset + translation)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: offset)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: translation)
+            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: currentIndex)
             .gesture(
                 DragGesture()
                     .updating($translation) { value, state, _ in
                         state = value.translation.width
                     }
                     .onEnded { value in
-                        let predictedEndOffset = value.predictedEndTranslation.width
-                        let predictedIndex = Int(round(
-                            Double(currentIndex) - Double(predictedEndOffset) / Double(geometry.size.width)
-                        ))
-                        
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                            currentIndex = max(0, min(predictedIndex, items.count - 1))
-                            offset = 0
+                        let threshold: CGFloat = geometry.size.width * 0.1 
+                        if value.translation.width < -threshold {
+                            currentIndex = min(currentIndex + 1, items.count - 1)
+                        } else if value.translation.width > threshold {
+                            currentIndex = max(currentIndex - 1, 0)
                         }
+                        offset = 0 
                     }
             )
         }
@@ -49,5 +46,5 @@ struct HorizontalFoodScrollView: View {
 }
 
 #Preview {
-    HorizontalFoodScrollView()
+    HorizontalScrollView()
 }

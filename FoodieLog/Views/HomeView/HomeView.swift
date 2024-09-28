@@ -9,12 +9,12 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var locationManager = LocationManager()
-   
+    
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-        
+                    
                     Text("최근 방문한 맛집")
                         .font(.title2)
                         .bold()
@@ -33,10 +33,10 @@ struct HomeView: View {
                             .padding(.leading, 20)
                             .padding(.bottom, -20)
                         if locationManager.authorizationStatus == .authorizedWhenInUse ||
-                           locationManager.authorizationStatus == .authorizedAlways {
-//                            let _ = print("Authorization Status: \(locationManager.authorizationStatus.rawValue)")
-//                            let _ = print(locationManager.location?.coordinate.latitude ?? 0)
-//                            let _ = print(locationManager.location?.coordinate.longitude ?? 0)
+                            locationManager.authorizationStatus == .authorizedAlways {
+                            //                            let _ = print("Authorization Status: \(locationManager.authorizationStatus.rawValue)")
+                            //                            let _ = print(locationManager.location?.coordinate.latitude ?? 0)
+                            //                            let _ = print(locationManager.location?.coordinate.longitude ?? 0)
                             NearByReStaurantView()
                                 .environmentObject(locationManager)
                         } else {
