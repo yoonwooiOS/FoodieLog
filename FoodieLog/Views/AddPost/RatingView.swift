@@ -16,6 +16,7 @@ struct RatingView: UIViewRepresentable {
         cosmosView.settings.fillMode = .half
         cosmosView.settings.starSize = 40
         cosmosView.settings.updateOnTouch = true
+        cosmosView.settings.minTouchRating = 0 
         cosmosView.didFinishTouchingCosmos = { value in
             rating = value
         }
