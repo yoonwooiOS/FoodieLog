@@ -9,75 +9,93 @@ import SwiftUI
 import CoreLocation
 
 struct NearByReStaurantView: View {
-    @StateObject private var locationManager = LocationManager()
+    @EnvironmentObject private var locationManager: LocationManager
     @State private var places: [Place] = []
-    @State private var photos: [String: UIImage] = [:]  // placeID를 키로 저장
-    private let placeService = PlaceService()
-    private let photoService = PhotoService()
-
+    @State private var photos: [String: UIImage] = [:]
+    private var networkManager = NetworkManager.shared
+    
     var body: some View {
         VStack {
             if let location = locationManager.location {
-//               Text("현재 위치: \(location.coordinate.latitude), \(location.coordinate.longitude)")
-//                    .font(.headline) 
-
-                // 맛집 리스트
-                List(places, id: \.placeID) { place in
-                    HStack {
-                        if let image = photos[place.placeID] {
-                            Image(uiImage: image)
-                                .resizable()
-                                .frame(width: 80, height: 80)
-                                .cornerRadius(8)
-                        } else {
-                            Rectangle()  // 로딩 중일 때 사용할 placeholder
-                                .frame(width: 80, height: 80)
-                                .cornerRadius(8)
-                                .foregroundColor(.gray)
-                                .onAppear {
-                                    if let photoRef = place.photos?.first?.photoReference {
-                                        fetchPlacePhoto(photoReference: photoRef, for: place.placeID)
+                if places.isEmpty {
+                    VStack(alignment: .center) {
+                        ProgressView("근처 맛집을 조회하고 있습니다. 잠시만 기다려주세요!")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                            .padding(.top, 72)
+                            .onAppear {
+                                fetchNearbyRestaurants(location: location)
+                            }
+                    }
+                } else {
+                    VStack(alignment: .leading) {
+                        ForEach(places, id: \.placeID) { place in
+                                HStack {
+                                    if let image = photos[place.placeID] {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .frame(width: 80, height: 80)
+                                            .cornerRadius(8)
+                                    } else {
+                                        Rectangle()
+                                            .frame(width: 80, height: 80)
+                                            .cornerRadius(8)
+                                            .foregroundColor(.gray)
+                                            .onAppear {
+                                                if let photoRef = place.photos?.first?.photoReference {
+                                                    fetchPlacePhoto(photoReference: photoRef, for: place.placeID)
+                                                }
+                                            }
                                     }
+                                    VStack(alignment: .leading) {
+                                        Text(place.name)
+                                            .font(.headline)
+                                        Text(place.vicinity ?? "No Address")
+                                        
+                                            .font(.subheadline)
+                                    }
+                                    .foregroundStyle(.black)
+                                    Spacer()
+                                    Button(action: {
+                                        openAppleMap(place: place)
+                                    }) {
+                                        Image(systemName: "map")
+                                            .foregroundColor(.black)
+                                    }
+                                    
+                                    .padding(.vertical, 8)
                                 }
-                        }
-                        VStack(alignment: .leading) {
-                            Text(place.name)
-                                .font(.headline)
-                            Text(place.vicinity ?? "No Address")
-                                .font(.subheadline)
+                            
+                            .padding(.vertical, 8)
                         }
                     }
-                    .padding(.vertical, 8)
+                    .padding()
                 }
             } else {
-                Text("위치를 가져오는 중...")
+                Text("")
                     .font(.headline)
-                    .onAppear {
-                        locationManager.requestLocationPermission()
-                    }
-            }
-        }
-        .onChange(of: locationManager.location) { newLocation in
-            if let location = newLocation {
-                fetchNearbyRestaurants(location: location)
             }
         }
     }
     
-    // 음식점 검색
     func fetchNearbyRestaurants(location: CLLocation) {
-        placeService.searchNearbyRestaurants(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude) { results in
+        networkManager.searchGoogleNearbyRestaurants(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude) { results in
             if let results = results {
                 DispatchQueue.main.async {
                     self.places = results
+                    for place in results {
+                        if let photoRef = place.photos?.first?.photoReference {
+                            fetchPlacePhoto(photoReference: photoRef, for: place.placeID)
+                        }
+                    }
                 }
             }
         }
     }
-
-    // 사진 가져오기
+    
     func fetchPlacePhoto(photoReference: String, for placeID: String) {
-        photoService.fetchPlacePhoto(photoReference: photoReference) { image in
+        networkManager.fetchGooglePlacePhoto(photoReference: photoReference) { image in
             if let image = image {
                 DispatchQueue.main.async {
                     self.photos[placeID] = image
@@ -85,6 +103,18 @@ struct NearByReStaurantView: View {
             }
         }
     }
+    func openAppleMap(place: Place) {
+           let latitude = place.geometry.location.lat
+           let longitude = place.geometry.location.lng
+           let placeName = place.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "Unknown" // 특수문자 Encoding
+
+           // Apple 지도 URL Scheme 생성
+           let appleMapURL = URL(string: "http://maps.apple.com/?q=\(placeName)&ll=\(latitude),\(longitude)")!
+           // URL 열기 시도
+           if UIApplication.shared.canOpenURL(appleMapURL) {
+               UIApplication.shared.open(appleMapURL, options: [:], completionHandler: nil)
+           }
+       }
 }
 #Preview {
     NearByReStaurantView()
