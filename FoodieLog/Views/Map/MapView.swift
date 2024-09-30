@@ -24,10 +24,18 @@ struct MapView: View {
                         .foregroundColor(.red)
                         .font(.title)
                     Text(place.name)
+                        .foregroundStyle(.black)
                         .font(.caption)
                 }
             }
         }
+        .cornerRadius(20)
+        .background(Color.gray.opacity(0.1))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
         .edgesIgnoringSafeArea(.all)
         .onAppear {
             if let selectedPlace = selectedPlace {
