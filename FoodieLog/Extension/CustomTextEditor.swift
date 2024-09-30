@@ -32,14 +32,14 @@ struct CustomTextEditorStyle: ViewModifier {
                 .scrollContentBackground(.hidden)
                 .font(.system(size: 14))
                 .overlay(alignment: .bottomTrailing) {
-                    Text("\(text.count) / 200")
+                    Text("\(text.count) / 500")
                         .font(.system(size: 12))
                         .foregroundColor(Color(UIColor.systemGray2))
                         .padding(.trailing, 15)
                         .padding(.bottom, 15)
                         .onChange(of: text) { newValue in
-                            if newValue.count > 200 {
-                                text = String(newValue.prefix(200))
+                            if newValue.count > 500 {
+                                text = String(newValue.prefix(500))
                             }
                         }
                 }
