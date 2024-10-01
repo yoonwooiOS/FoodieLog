@@ -7,47 +7,75 @@
 
 import SwiftUI
 
+
 struct HomeView: View {
     @StateObject var locationManager = LocationManager()
+    @State private var reviews: [Review] = []
+    @State private var isLoading = true
+    private let reviewRepository = ReviewRepository()
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    
-                    Text("최근 방문한 맛집")
-                        .font(.title2)
-                        .bold()
-                        .padding(.leading, 20)
-                        .padding(.bottom, -20)
-                    NavigationLink {
-                        DetailView()
-                    } label: {
-                        HorizontalScrollView()
-                    }
-                    .buttonStyle(.plain)
-                    LazyVStack(alignment: .leading) {
-                        Text("근처 맛집")
-                            .font(.title2)
-                            .bold()
-                            .padding(.leading, 20)
-                            .padding(.bottom, -20)
-                        if locationManager.authorizationStatus == .authorizedWhenInUse ||
-                            locationManager.authorizationStatus == .authorizedAlways {
-                            //                            let _ = print("Authorization Status: \(locationManager.authorizationStatus.rawValue)")
-                            //                            let _ = print(locationManager.location?.coordinate.latitude ?? 0)
-                            //                            let _ = print(locationManager.location?.coordinate.longitude ?? 0)
-                            NearByReStaurantView()
-                                .environmentObject(locationManager)
-                        } else {
-                            Text("")
+            ZStack {
+                ScrollView {
+                    if isLoading {
+                        ProgressView("")
+                            .padding()
+                    } else {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("최근 방문한 맛집")
+                                .font(.title2)
+                                .bold()
                                 .padding(.leading, 20)
-                                .onAppear {
-                                    locationManager.requestLocationPermission()
+                                .padding(.bottom, -20)
+                            
+                            HorizontalScrollView(reviews: $reviews)
+                                .frame(height: 300)
+                            
+                            LazyVStack(alignment: .leading) {
+                                Text("근처 맛집")
+                                    .font(.title2)
+                                    .bold()
+                                    .padding(.leading, 20)
+                                    .padding(.bottom, -20)
+                                if locationManager.authorizationStatus == .authorizedWhenInUse ||
+                                    locationManager.authorizationStatus == .authorizedAlways {
+                                    NearByReStaurantView()
+                                        .environmentObject(locationManager)
+                                } else {
+                                    Text("")
+                                        .padding(.leading, 20)
                                 }
+                            }
                         }
                     }
                 }
+                //FloatingButton
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        NavigationLink {
+                            AddPostView()
+                        } label: {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .padding()
+                                .background(Color.orange)
+                                .foregroundColor(.white)
+                                .clipShape(Circle())
+                                .shadow(radius: 5)
+                        }
+                        .padding(.trailing, 20)
+                        .padding(.bottom, 20)
+                    }
+                }
+            }
+            .task {
+                locationManager.requestLocationPermission()
+                reviews = reviewRepository.fetchLatestFive()
+                isLoading = false // 데이터가 로드된 후 로딩 상태를 해제
             }
             .navigationTitle("맛집 Log")
         }
