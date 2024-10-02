@@ -10,17 +10,18 @@ import Cosmos
 import MapKit
 import PhotosUI
 
-struct BaseBoxView: View {
-    @State private var reviewText: String = ""
+struct ContentView: View {
+    @Binding var content: String
     
     var body: some View {
         VStack(alignment: .leading) {
+            
             Text("리뷰")
                 .font(.headline)
                 .foregroundColor(.primary)
             
-            TextEditor(text: $reviewText)
-                .customStyleEditor(placeholder: "후기 작성해주세요", userInput: $reviewText)
+            TextEditor(text: $content)
+                .customStyleEditor(placeholder: "후기 작성해주세요", userInput: $content)
                 .background(Color.white)
                 .cornerRadius(10)
                 .overlay(
@@ -35,7 +36,7 @@ struct BaseBoxView: View {
     }
 }
 struct CustomTextFieldView: View {
-    @State private var inputText: String = ""
+    @Binding  var title: String
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -43,7 +44,7 @@ struct CustomTextFieldView: View {
                 .font(.headline)
                 .foregroundColor(.primary)
                 .padding(.bottom, -6)
-            TextField("제목을 입력하세요", text: $inputText)
+            TextField("제목을 입력하세요", text: $title)
                 .font(.system(size: 18))
                 .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
                 .background(Color.white)
@@ -58,70 +59,71 @@ struct CustomTextFieldView: View {
         }
     }
 }
-struct LocationView: View {
-    var body: some View {
-        VStack {
-            VStack {
-                Image(systemName: "map")
-                    .font(.system(size: 40))
-                    .foregroundColor(.gray.opacity(0.8))
-                Text("지도에서 맛집을 검색하고 등록해보세요!")
-                    .font(.body)
-                    .foregroundColor(.gray)
-                    .padding(.top, 10)
-            }
-            .frame(width: 360, height: 100)
-            .cornerRadius(20)
-            .background(Color.gray.opacity(0.1))
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-            )
-            .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
-        }
-    }
-}
-
 struct AddPostView: View {
     @State private var visitDate = Date()
     @State private var isShowingDatePicker = false
-    @State private var rating: Double = 0
-    @State private var selectedPlace: Place?
+    @State var rating: Double
+    @Binding var selectedPlace: Place?
     @State private var isShowSheet = false
     @State private var selectedPhotos: [PhotosPickerItem] = []
     @State private var selectedImages: [UIImage] = []
     @State private var isPhotosPickerPresented: Bool = false
-    
+    @State private var title: String = ""
+    @State private var content: String = ""
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    private let reviewRepository = ReviewRepository()
+    private let imageManager = ImageManager.shared
+    @Binding var path: NavigationPath
+    private var isSaveButtonEnabled: Bool {
+        !title.isEmpty && !selectedImages.isEmpty && selectedPlace != nil
+    }
+    @State private var shouldDismiss = false
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    CustomTextFieldView()
-                        .padding(.horizontal)
-                    dateSelectionView
-                        .padding(.horizontal)
-                    BaseBoxView()
-                        .padding(.horizontal)
-                    restaurantSelectionView
-                    photoView
-                        .padding(.horizontal)
-                    Divider()
-                    ratingView
-                        .padding(.horizontal)
-                    Divider()
-                }
-                .padding(.top)
+        ScrollView {
+            HStack {
+                Text(selectedPlace?.name ?? "")
+                    .font(.headline)
+                Image(systemName: "star.fill")
+                    .font(.caption)
+                    .foregroundColor(.yellow)
+                    .padding(.leading, -4)
+                Text(rating.oneDecimalString)
+                    .font(.caption)
+                    .padding(.leading, -6)
+                Spacer()
+                
             }
-            .navigationTitle("후기 등록")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    saveButton
-                }
+            .padding(.horizontal)
+            VStack {
+                MapView(selectedPlace: $selectedPlace)
+                    .frame(width: 360, height: 80)
+                    .cornerRadius(8)
+                    .padding(.leading, 0)
+                Spacer()
             }
-            .onTapGesture {
-                hideKeyboard()
+            .padding(.horizontal)
+            VStack(spacing: 20) {
+                CustomTextFieldView(title: $title)
+                    .padding(.horizontal)
+                dateSelectionView
+                    .padding(.horizontal)
+                ContentView(content: $content)
+                    .padding(.horizontal)
+                photoView
+                    .padding(.horizontal)
             }
+            .padding(.top)
+        }
+        .navigationTitle("후기 등록")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                saveButton
+            }
+        }
+        .onTapGesture {
+            hideKeyboard()
         }
         .sheet(isPresented: $isShowingDatePicker) {
             NavigationView {
@@ -168,7 +170,20 @@ struct AddPostView: View {
                 loadPhotos(from: newPhotos)
             }
         }
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("알림"),
+                message: Text(alertMessage),
+                dismissButton: .default(Text("확인")) {
+                    if alertMessage == "리뷰가 성공적으로 저장되었습니다." {
+                        path.removeLast(path.count)
+                    }
+                }
+            )
+        }
     }
+    
+    
     
     private var photoView: some View {
         VStack(alignment: .leading) {
@@ -193,12 +208,10 @@ struct AddPostView: View {
                                     Image(systemName: "xmark.circle.fill")
                                         .resizable()
                                         .frame(width: 24, height: 24)
-                                    
                                         .foregroundColor(.red)
                                         .background(Color.white.opacity(0.7))
                                         .clipShape(Circle())
                                         .offset(x: 10, y: -10)
-                                    
                                 }
                                 .frame(width: 100, height: 100)
                                 .onTapGesture {
@@ -213,6 +226,7 @@ struct AddPostView: View {
             }
         }
     }
+    
     private var largePhotoPickerButton: some View {
         PhotosPicker(selection: $selectedPhotos,
                      maxSelectionCount: 5,
@@ -260,6 +274,7 @@ struct AddPostView: View {
             )
         }
     }
+    
     private func loadPhotos(from items: [PhotosPickerItem]) {
         selectedImages.removeAll()
         for item in items {
@@ -277,12 +292,14 @@ struct AddPostView: View {
             }
         }
     }
+    
     private func deleteImage(at index: Int) {
         selectedImages.remove(at: index)
         if index < selectedPhotos.count {
             selectedPhotos.remove(at: index)
         }
     }
+    
     private var dateSelectionView: some View {
         VStack(alignment: .leading) {
             Text("방문 일자")
@@ -311,61 +328,55 @@ struct AddPostView: View {
         }
     }
     
-    private var ratingView: some View {
-        VStack(alignment: .center) {
-            HStack {
-                Spacer()
-                RatingView(rating: $rating)
-                    .frame(width: 200, height: 40)
-                Spacer()
-            }
-            Text("\(rating.formatted())점")
-                .foregroundStyle(.gray)
-                .padding(.top, 8)
+    private func saveReviewToRealm() {
+        guard let selectedPlace = selectedPlace else {
+            alertMessage = "식당 정보가 필요합니다."
+            showAlert = true
+            return
         }
-    }
-    
-    private var restaurantSelectionView: some View {
-        VStack {
-            if selectedPlace == nil {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("식당 등록")
-                        .font(.headline)
-                        .padding(.bottom, -6)
-                    Button {
-                        self.isShowSheet.toggle()
-                    } label: {
-                        LocationView()
-                        
-                    }
-                }
-            } else {
-                VStack(alignment: .leading) {
-                    Text(selectedPlace?.name ?? "")
-                        .font(.headline)
-                        .bold()
-                    Text(selectedPlace?.formattedAddress ?? "")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    Button {
-                        self.isShowSheet.toggle()
-                    } label: {
-                        MapView(selectedPlace: $selectedPlace)
-                            .frame(width: 360, height: 100)
-                            .cornerRadius(10)
-                    }
-                }
+        
+        if title.isEmpty {
+            alertMessage = "제목을 입력해주세요."
+            showAlert = true
+            return
+        }
+        
+        if selectedImages.isEmpty {
+            alertMessage = "최소 한 장의 사진을 선택해주세요."
+            showAlert = true
+            return
+        }
+        
+        let review = Review()
+        review.title = title
+        review.content = content
+        review.rating = rating
+        review.date = visitDate
+        review.restaurantName = selectedPlace.name
+        review.restaurantAddress = selectedPlace.formattedAddress ?? ""
+        review.latitude = String(selectedPlace.geometry.location.lat)
+        review.longitude = String(selectedPlace.geometry.location.lng)
+        
+        for (index, image) in selectedImages.enumerated() {
+            if let imageName = imageManager.saveImageToDisk(image: image, imageName: "review_image_\(index)_\(review.id.stringValue)") {
+                review.imagePaths.append(imageName)
             }
         }
-        .padding(.horizontal)
+        reviewRepository.add(review)
+        
+        alertMessage = "리뷰가 성공적으로 저장되었습니다."
+        showAlert = true
     }
     
     private var saveButton: some View {
         Button {
-            print("저장")
+            saveReviewToRealm()
+            shouldDismiss = true
         } label: {
             Text("저장")
-                .foregroundStyle(.black)
+                .foregroundColor(isSaveButtonEnabled ? .black : .gray)
         }
+        .disabled(!isSaveButtonEnabled)
     }
 }
+
