@@ -6,138 +6,242 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct DetailView: View {
+    
     @Environment(\.presentationMode) var presentationMode
-    var reviewText: String = """
-    ✅지리산 흑돼지 소금구이 맛집✨
-    너무 가고 싶었던 산청숯불가는 마곡! 저녁과 주말에는 웨이팅이 심하다고 해서 평일 점심에 방문했는데요 웬걸… 평일 점심에도 사람이 많았어요 😳 조금만 늦었으면 웨이팅 있었을수도!
-    캐치테이블로 예약하고 방문하시길 추천👍
+    @State private var currentIndex: Int = 0
+    var review: Review
     
-    📍맛
-    
-    소금구이 시키면 지리산 흑돼지의 다양한 부위를 먹어볼수 있어요~ 직접 구워주셔서 더 편하지만 구워주는 분의 스킬에 따라 맛도 천차만별일거 같네요 고추장 구이 기대했는데 제입맛에는 소금구이가 더 맛났어요~
-    
-    tip. 추가 주문 시 소금구이는 반접시 주문가능
-    냉면은 오이가 잔뜩들어가서 입가심으로 먹기 좋았구 볶음밥을 먹고 싶었지만😭 배불러서 못먹은게 아쉽네요 다음에 한번 더 먹으러 가지 않을까 싶네요 😊💙
-    """
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading) {
+            VStack(spacing: 0) {
+                // 이미지 슬라이더
+                ZStack(alignment: .bottom) {
+                    HorizontalScrollViews(currentIndex: $currentIndex, review: review)
+                        .frame(height: 300)
+                    
+                    PageControl(numberOfPages: review.imagePaths.count, currentIndex: $currentIndex)
+                        .padding(.bottom, 8)
+                }
+                .ignoresSafeArea(edges: .top)
                 
-                HorizontalScrollViews()
-                
-                VStack(alignment: .leading, spacing: 16) {
-                    HStack {
-                        Text("산청가든")
-                            .font(.title)
+                VStack(alignment: .leading, spacing: 20) {
+                    // 제목
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("제목")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Text(review.title)
+                            .font(.title3)
                             .fontWeight(.bold)
-                        Spacer()
-                        Button {
-                            
-                        } label: {
-                            Image(systemName: "heart.fill")
-                                .foregroundColor(.red)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+                    
+                    // 후기
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("후기")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Text(review.content)
+                            .font(.body)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+                    
+                    // 식당 정보
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(review.restaurantName)
+                            .font(.title3)
+                            .fontWeight(.bold)
+                        Text(review.restaurantAddress)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        HStack(spacing: 4) {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                            Text(review.rating.oneDecimalString)
+                                .font(.subheadline)
+                            Text(formattedDate(review.date))
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
+                        DetailMapView(latitude: review.latitude, longitude: review.longitude)
+                            .frame(height: 150)
+                            .cornerRadius(12)
                     }
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
-                        Text("4.5")
-                            .font(.subheadline)
-                        Text("2024.09.17")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
-                    RoundedRectangle(cornerRadius: 12)
-                        .foregroundColor(.gray)
-                        .frame(width: 360, height: 200)
-                    Text("후기")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    Text(reviewText)
-                        .font(.body)
-                        .foregroundColor(.black)
-                        .multilineTextAlignment(.leading)
-                        .padding()
-                        .background(Color(UIColor.systemGray6))
-                        .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.gray, lineWidth: 1)
-                        )
-                        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-                    
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
                 }
                 .padding()
+                .background(ColorSet.primary.color)
             }
         }
         .edgesIgnoringSafeArea(.top)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    presentationMode.wrappedValue.dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
-                }
-            }
+        .background(ColorSet.primary.color.ignoresSafeArea())
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            setTransparentBackButton()
+        }
+        .onDisappear {
+            resetNavigationBar()
         }
     }
-}
-#Preview {
-    NavigationView {
-        DetailView()
+    
+    private func setTransparentBackButton() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.shadowColor = .clear
+        
+        // Back 버튼의 텍스트를 투명하게 설정
+        let backButtonAppearance = UIBarButtonItemAppearance()
+        backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
+        backButtonAppearance.highlighted.titleTextAttributes = [.foregroundColor: UIColor.clear]
+        appearance.backButtonAppearance = backButtonAppearance
+        
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
+    
+    // 기본 내비게이션 바 스타일로 복원
+    private func resetNavigationBar() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
 }
-
+extension UINavigationBar {
+    static func changeAppearance(clear: Bool) {
+        let appearance = UINavigationBarAppearance()
+        
+        if clear {
+            appearance.configureWithTransparentBackground()
+        } else {
+            appearance.configureWithDefaultBackground()
+        }
+        
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
+}
 struct HorizontalScrollViews: View {
-    let items = Array(0..<3)
-    
-    @State private var currentIndex: Int = 0
+    @Binding var currentIndex: Int
+    @State private var reviewImages: [Image] = []
     @State private var offset: CGFloat = 0
     @GestureState private var translation: CGFloat = 0
+    var review: Review
     
     var body: some View {
         GeometryReader { geometry in
-            HStack(spacing: 0) {
-                ForEach(items.indices, id: \.self) { index in
-                    Image("Sancheong")
-                        .resizable()
-                    //                        .frame(height: 300)
-                        .clipped()
-                        .edgesIgnoringSafeArea(.top)
-                        .frame(width: geometry.size.width, height:  geometry.size.height * 1.2)
-                }
-            }
-            .offset(x: -CGFloat(currentIndex) * geometry.size.width + offset + translation)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: offset)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: translation)
-            .gesture(
-                DragGesture()
-                    .updating($translation) { value, state, _ in
-                        state = value.translation.width
+            VStack {
+                HStack(spacing: 0) {
+                    ForEach(reviewImages.indices, id: \.self) { index in
+                        reviewImages[index]
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geometry.size.width, height: 300)
+                            .clipped()
                     }
-                    .onEnded { value in
-                        let predictedEndOffset = value.predictedEndTranslation.width
-                        let predictedIndex = Int(round(
-                            Double(currentIndex) - Double(predictedEndOffset) / Double(geometry.size.width)
-                        ))
-                        
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                            currentIndex = max(0, min(predictedIndex, items.count - 1))
+                }
+                .offset(x: -CGFloat(currentIndex) * geometry.size.width + offset + translation)
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: offset)
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: translation)
+                .gesture(
+                    DragGesture()
+                        .updating($translation) { value, state, _ in
+                            state = value.translation.width
+                        }
+                        .onEnded { value in
+                            let threshold: CGFloat = geometry.size.width * 0.1
+                            if value.translation.width < -threshold {
+                                currentIndex = min(currentIndex + 1, reviewImages.count - 1)
+                            } else if value.translation.width > threshold {
+                                currentIndex = max(currentIndex - 1, 0)
+                            }
                             offset = 0
                         }
-                    }
-            )
+                )
+                
+                PageControl(numberOfPages: reviewImages.count, currentIndex: $currentIndex)
+                    .padding(.top, 8)
+            }
         }
-        .frame(height: 300)
+        //        .frame(height: 300)
         .clipped()
+        .task {
+            loadImages()
+        }
+    }
+    
+    private func loadImages() {
+        reviewImages = review.imagePaths.compactMap { imagePath in
+            if let uiImage = ImageManager.shared.loadImageFromDisk(imageName: imagePath) {
+                return Image(uiImage: uiImage)
+            }
+            return nil
+        }
+    }
+}
+struct MapLocation: Identifiable {
+    let id = UUID()
+    let coordinate: CLLocationCoordinate2D
+}
+struct DetailMapView: View {
+    var latitude: String
+    var longitude: String
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+        span: MKCoordinateSpan(latitudeDelta: 0.009, longitudeDelta: 0.009)
+    )
+    @State private var locations: [MapLocation] = []
+    
+    var body: some View {
+        Map(coordinateRegion: $region, annotationItems: locations) { location in
+            MapAnnotation(coordinate: location.coordinate) {
+                VStack {
+                    Image(systemName: "mappin.circle.fill")
+                        .foregroundColor(.red)
+                        .font(.title)
+                    Text("Location")
+                        .foregroundColor(.black)
+                        .font(.caption)
+                }
+            }
+        }
+        .cornerRadius(20)
+        .background(Color.gray.opacity(0.1))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+        .task {
+            setRegion(latitude: latitude, longitude: longitude)
+        }
+    }
+    
+    private func setRegion(latitude: String, longitude: String) {
+        if let lat = Double(latitude), let lon = Double(longitude) {
+            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            region = MKCoordinateRegion(
+                center: coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+            )
+            locations = [MapLocation(coordinate: coordinate)]
+        }
     }
 }

@@ -22,7 +22,7 @@ struct HomeTabView: View {
                 }
                 .tag(0)
 
-                FolderView()
+                UserPostView()
                     .tabItem {
                         Image(systemName: "folder")
                         Text("")

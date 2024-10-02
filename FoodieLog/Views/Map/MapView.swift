@@ -11,7 +11,7 @@ import MapKit
 struct MapView: View {
     @Binding var selectedPlace: Place?
     @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // 초기화: 서울역
+        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), 
         span: MKCoordinateSpan(latitudeDelta: 0.009, longitudeDelta: 0.009)
     )
 
@@ -51,6 +51,8 @@ struct MapView: View {
     private func setRegion(for place: Place) {
         let latitude = place.geometry.location.lat
         let longitude = place.geometry.location.lng
+        
+        print("Setting region for place: \(place.name), Latitude: \(latitude), Longitude: \(longitude)")
 
         region = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),

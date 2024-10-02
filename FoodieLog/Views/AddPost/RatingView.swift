@@ -10,11 +10,11 @@ import Cosmos
 
 struct RatingView: UIViewRepresentable {
     @Binding var rating: Double
-    
+    var starSize: Double?
     func makeUIView(context: Context) -> CosmosView {
         let cosmosView = CosmosView()
         cosmosView.settings.fillMode = .half
-        cosmosView.settings.starSize = 40
+        cosmosView.settings.starSize = starSize ?? 40
         cosmosView.settings.updateOnTouch = true
         cosmosView.settings.minTouchRating = 0 
         cosmosView.didFinishTouchingCosmos = { value in
