@@ -11,16 +11,13 @@ import SwiftUI
 struct HomeView: View {
     @Binding var path: NavigationPath
     @StateObject var locationManager = LocationManager()
-    @State private var reviews: [Review] = []
+    @State private var reviews: [ReviewData] = []
     @State private var isLoading = true
     private let reviewRepository = ReviewRepository()
     
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
-                ColorSet.primary.color
-                    .ignoresSafeArea()
-                
                 VStack(alignment: .leading, spacing: 0) {
                     Text("FoodieLog")
                         .font(.system(size: 30, weight: .bold))
@@ -29,34 +26,43 @@ struct HomeView: View {
                         .padding(.top, 16)
                         .padding(.bottom, 16)
                     
-                    ScrollView {
+                    ScrollView(showsIndicators: false) {
                         if isLoading {
                             ProgressView("")
                                 .padding()
                         } else {
                             VStack(alignment: .leading, spacing: 20) {
-                                Text("최근 방문한 맛집")
+                                // 최근 방문한 맛집 섹션
+                                Text("최근 등록한 리뷰")
                                     .font(.title3)
                                     .bold()
                                     .padding(.leading, 20)
                                     .padding(.bottom, -20)
                                 
-                                HorizontalScrollView(reviews: $reviews)
-                                    .frame(height: 300)
+                                if reviews.isEmpty {
+                                    emptyCardView
+                                    
+                                } else {
+                                    HorizontalScrollView(reviews: $reviews, path: $path)
+                                        .frame(height: 300)
+                                }
                                 
+                                // 근처 맛집 섹션
                                 LazyVStack(alignment: .leading) {
                                     Text("근처 맛집")
                                         .font(.title3)
                                         .bold()
                                         .padding(.leading, 20)
                                         .padding(.bottom, -20)
+                                    
                                     if locationManager.authorizationStatus == .authorizedWhenInUse ||
                                         locationManager.authorizationStatus == .authorizedAlways {
                                         NearByReStaurantView()
                                             .environmentObject(locationManager)
                                     } else {
-                                        Text("")
-                                            .padding(.leading, 20)
+                                        //                                        Text("위치 권한을 허용해주세요.")
+                                        //                                            .padding(.leading, 20)
+                                        //                                            .foregroundColor(.secondary)
                                     }
                                 }
                             }
@@ -64,7 +70,7 @@ struct HomeView: View {
                     }
                 }
                 
-                //FloatingButton
+                // Floating Button
                 VStack {
                     Spacer()
                     HStack {
@@ -74,7 +80,7 @@ struct HomeView: View {
                                 .resizable()
                                 .frame(width: 24, height: 24)
                                 .padding()
-                                .background(Color.init(hex: "#d4a373"))
+                                .background(ColorSet.accent.color)
                                 .foregroundColor(.white)
                                 .clipShape(Circle())
                         }
@@ -91,12 +97,44 @@ struct HomeView: View {
                     AddPostView(rating: rating, selectedPlace: .constant(place), path: $path)
                 }
             }
-            .task {
-                locationManager.requestLocationPermission()
-                reviews = reviewRepository.fetchLatestFive()
-                isLoading = false
+            .onAppear {
+                NotificationCenter.default.addObserver(forName: NSNotification.Name("RefreshReviews"), object: nil, queue: .main) { _ in
+                    refreshReviews()
+                }
+                refreshReviews()
             }
+            .onDisappear {
+                NotificationCenter.default.removeObserver(self, name: NSNotification.Name("RefreshReviews"), object: nil)
+            }
+            .onChange(of: path) { _ in
+                
+                refreshReviews()
+            }
+            .background(ColorSet.primary.color)
             .navigationBarHidden(true)
         }
+    }
+    
+    private func refreshReviews() {
+        locationManager.requestLocationPermission()
+        reviews = reviewRepository.fetchLatestFive()
+        isLoading = false
+    }
+    
+    private var emptyCardView: some View {
+        ZStack {
+            Color.gray.opacity(0.2)
+                .cornerRadius(20)
+                .overlay(
+                    Text("최근 등록한 리뷰가 없습니다.")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding() // 내부 패딩
+                )
+        }
+        .frame(maxWidth: .infinity, minHeight: 250)
+        .padding(.horizontal)
+        .padding(.top)
     }
 }

@@ -11,6 +11,10 @@ import SwiftUI
 struct HomeTabView: View {
     @State private var path = NavigationPath()
     @State private var selectedTab = 0
+    init() {
+            setupTabBarAppearance()
+        }
+
     var body: some View {
             TabView(selection: $selectedTab) {
                 NavigationStack(path: $path) {
@@ -22,14 +26,15 @@ struct HomeTabView: View {
                 }
                 .tag(0)
 
-                UserPostView()
+                UserPostView(path: $path)
                     .tabItem {
                         Image(systemName: "folder")
                         Text("")
                     }
                     .tag(1)
-
-                SettingView()
+                NavigationStack(path: $path) {
+                    SettingView()
+                }
                     .tabItem {
                         Image(systemName: selectedTab == 2 ? "gearshape.fill" : "gearshape")
                         Text("")
@@ -45,7 +50,17 @@ struct HomeTabView: View {
                 //                .tag(3)
 
             }
-            .accentColor(Color(hex: "d4a373"))
+            .accentColor(ColorSet.tab.color)
+        }
+    private func setupTabBarAppearance() {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(Color(hex: "#EBEBEB")) // TabView 배경색
+
+            // 설정을 TabBar에 적용
+            UITabBar.appearance().standardAppearance = appearance
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+            UITabBar.appearance().barTintColor = UIColor(Color(hex: "#EBEBEB"))
         }
 }
 #Preview {

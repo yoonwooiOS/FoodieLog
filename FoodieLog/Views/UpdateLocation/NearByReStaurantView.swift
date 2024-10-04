@@ -35,13 +35,16 @@ struct NearByReStaurantView: View {
                                     if let image = photos[place.placeID] {
                                         Image(uiImage: image)
                                             .resizable()
+                                            .aspectRatio(contentMode: .fill)
                                             .frame(width: 80, height: 80)
                                             .cornerRadius(8)
                                     } else {
-                                        Rectangle()
+                                        Image("NoImage")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
                                             .frame(width: 80, height: 80)
                                             .cornerRadius(8)
-                                            .foregroundColor(.gray)
+//                                            .foregroundColor(.gray)
                                             .onAppear {
                                                 if let photoRef = place.photos?.first?.photoReference {
                                                     fetchPlacePhoto(photoReference: photoRef, for: place.placeID)
@@ -107,15 +110,10 @@ struct NearByReStaurantView: View {
            let latitude = place.geometry.location.lat
            let longitude = place.geometry.location.lng
            let placeName = place.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "Unknown" // 특수문자 Encoding
-
-           // Apple 지도 URL Scheme 생성
            let appleMapURL = URL(string: "http://maps.apple.com/?q=\(placeName)&ll=\(latitude),\(longitude)")!
-           // URL 열기 시도
            if UIApplication.shared.canOpenURL(appleMapURL) {
                UIApplication.shared.open(appleMapURL, options: [:], completionHandler: nil)
            }
        }
 }
-#Preview {
-    NearByReStaurantView()
-}
+

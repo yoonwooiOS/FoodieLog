@@ -37,7 +37,7 @@ struct MapView: View {
         )
         .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
         .edgesIgnoringSafeArea(.all)
-        .onAppear {
+        .task {
             if let selectedPlace = selectedPlace {
                 setRegion(for: selectedPlace)
             }

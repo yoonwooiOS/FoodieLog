@@ -8,15 +8,18 @@
 import SwiftUI
 
 struct FoodCardView: View {
-    let review: Review
+    let reviewData: ReviewData
+    @Binding var path: NavigationPath
     @State private var rating: Double
     @State private var loadedImage: UIImage? = nil
     @State private var isNavigationActive = false
     
-    init(review: Review) {
-        self.review = review
-        _rating = State(initialValue: review.rating)
+    init(reviewData: ReviewData, path: Binding<NavigationPath>) {
+        self.reviewData = reviewData
+        _rating = State(initialValue: reviewData.rating)
+        self._path = path
     }
+    
     var body: some View {
         ZStack {
             if let image = loadedImage {
@@ -29,7 +32,6 @@ struct FoodCardView: View {
                         overlayContent,
                         alignment: .bottom
                     )
-                
             } else {
                 Color.gray.opacity(0.3)
                     .frame(width: 350, height: 250)
@@ -41,12 +43,10 @@ struct FoodCardView: View {
             isNavigationActive = true
         }
         .background(
-            NavigationLink(
-                destination: DetailView(review: review),
-                isActive: $isNavigationActive,
-                label: { EmptyView() }
-            )
-        )
+                    NavigationLink(destination: DetailView(reviewData: reviewData, path: $path), isActive: $isNavigationActive) {
+                        EmptyView()
+                    }
+                )
         .onAppear {
             loadImage()
         }
@@ -57,18 +57,13 @@ struct FoodCardView: View {
             Spacer()
             HStack {
                 Spacer()
-                //MARK: 카테고리
-                //                Label("한식", systemImage: "person")
-                //                Image(systemName: "fork.knife")
-                //                    .font(.caption)
-                //                    .foregroundColor(.gray)
-                Text(review.restaurantName)
+                Text(reviewData.restaurantName)
                     .foregroundStyle(.black)
                     .font(.headline)
                 Spacer()
             }
             HStack {
-                RatingView(rating: $rating, starSize: 20)
+                RatingView(rating: $rating, starSize: 20, isInteractive: false)
                     .frame(width: 100)
             }
             Spacer()
@@ -82,17 +77,20 @@ struct FoodCardView: View {
     }
     
     private func loadImage() {
-        if let firstImagePath = review.imagePaths.first {
-            print("Attempting to load image from path: \(firstImagePath)")
-            loadedImage = ImageManager.shared.loadImageFromDisk(imageName: firstImagePath)
-            
-            if loadedImage == nil {
-                print("Failed to load image from path: \(firstImagePath)")
+        DispatchQueue.global(qos: .background).async {
+            if let firstImagePath = self.reviewData.imagePaths.first {
+                print("Attempting to load image from path: \(firstImagePath)")
+                if let image = ImageManager.shared.loadImageFromDisk(imageName: firstImagePath) {
+                    DispatchQueue.main.async {
+                        self.loadedImage = image
+                        print("Image loaded successfully from path: \(firstImagePath)")
+                    }
+                } else {
+                    print("Failed to load image from path: \(firstImagePath)")
+                }
             } else {
-                print("Image loaded successfully from path: \(firstImagePath)")
+                print("No image path found in reviewData.imagePaths")
             }
-        } else {
-            print("No image path found in review.imagePaths")
         }
     }
 }

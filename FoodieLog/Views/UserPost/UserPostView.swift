@@ -9,17 +9,15 @@ import SwiftUI
 import RealmSwift
 
 struct UserPostView: View {
-    @State private var reviews: [Review] = []
+    @Binding var path: NavigationPath
+    @State private var reviews: [ReviewData] = []
     let realmRepository = ReviewRepository()
     
     var body: some View {
         NavigationStack {
             ZStack {
-                ColorSet.primary.color
-                    .ignoresSafeArea()
-                
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("저장한 리뷰")
+                    Text("등록한 리뷰")
                         .font(.system(size: 30, weight: .bold))
                         .foregroundColor(.black)
                         .padding(.leading, 20)
@@ -27,29 +25,48 @@ struct UserPostView: View {
                         .padding(.bottom, 16)
                     
                     ScrollView {
-                        LazyVStack(spacing: 16) {
-                            ForEach(reviews) { review in
-                                ReviewCardView(review: review)
+                        if reviews.isEmpty {
+                            VStack {
+                                Spacer()
+                                Text("등록한 리뷰가 없습니다.")
+                                    .font(.title2)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                Spacer()
                             }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        } else {
+                            LazyVStack(alignment: .leading, spacing: 16) {
+                                ForEach(reviews, id: \.id) { review in
+                                    NavigationLink(destination: DetailView(reviewData: review, path: $path)) {
+                                        ReviewCardView(review: review)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                     }
                 }
             }
+            .background(ColorSet.primary.color)
             .onAppear {
                 fetchReviews()
             }
+            .onChange(of: path) { _ in
+                           fetchReviews()
+                       }
             .navigationBarHidden(true)
         }
     }
     
     private func fetchReviews() {
-        reviews = realmRepository.fetchAll()
+        reviews = realmRepository.fetchAll().map { ReviewData(from: $0) }
     }
 }
 
 struct ReviewCardView: View {
-    let review: Review
+    let review: ReviewData
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -59,6 +76,7 @@ struct ReviewCardView: View {
                 Spacer()
                 Text(review.title)
                     .font(.headline)
+                    .foregroundStyle(.black)
                     .lineLimit(1)
                 
                 Text(review.restaurantName)
@@ -103,6 +121,7 @@ struct ReviewCardView: View {
                 .foregroundColor(.yellow)
                 .font(.caption)
             Text(review.rating.oneDecimalString)
+                .foregroundColor(.black)
                 .font(.caption)
         }
     }

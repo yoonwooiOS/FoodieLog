@@ -11,8 +11,8 @@ struct HorizontalScrollView: View {
     @State private var currentIndex: Int = 0
     @State private var offset: CGFloat = 0
     @GestureState private var translation: CGFloat = 0
-    @Binding var reviews: [Review]
-    
+    @Binding var reviews: [ReviewData]
+    @Binding var path: NavigationPath
     var body: some View {
         VStack {
             GeometryReader { geometry in
@@ -20,7 +20,7 @@ struct HorizontalScrollView: View {
                     ForEach(reviews, id: \.self) { review in
                         ZStack {
 
-                            FoodCardView(review: review)
+                            FoodCardView(reviewData: review, path: $path)
                                 .frame(width: geometry.size.width)
                         }
                     }
@@ -54,9 +54,6 @@ struct HorizontalScrollView: View {
 
             PageControl(numberOfPages: reviews.count, currentIndex: $currentIndex)
                 .padding(.top, 0)
-        }
-        .onAppear {
-            print("Number of reviews: \(reviews.count)")
         }
     }
 }
