@@ -9,20 +9,31 @@ import SwiftUI
 import MapKit
 
 struct DetailView: View {
-    
     @Environment(\.presentationMode) var presentationMode
+    @Binding var path: NavigationPath
     @State private var currentIndex: Int = 0
-    var review: Review
+    @State private var showingActionSheet = false
+    @State private var showingEditView = false
+    @State private var showingDeleteAlert = false
+    @State private var reviewData: ReviewData
+    @State private var isDeleted = false
+    let reviewRepository = ReviewRepository()
+    
+    init(reviewData: ReviewData, path: Binding<NavigationPath>) {
+        self._path = path
+        self._reviewData = State(initialValue: reviewData)
+        setupNavigationBarAppearance()
+    }
     
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
                 // 이미지 슬라이더
                 ZStack(alignment: .bottom) {
-                    HorizontalScrollViews(currentIndex: $currentIndex, review: review)
+                    DetailViewHorizontalScrollView(currentIndex: $currentIndex, review: reviewData)
                         .frame(height: 300)
                     
-                    PageControl(numberOfPages: review.imagePaths.count, currentIndex: $currentIndex)
+                    PageControl(numberOfPages: reviewData.imagePaths.count, currentIndex: $currentIndex)
                         .padding(.bottom, 8)
                 }
                 .ignoresSafeArea(edges: .top)
@@ -33,7 +44,7 @@ struct DetailView: View {
                         Text("제목")
                             .font(.headline)
                             .foregroundColor(.secondary)
-                        Text(review.title)
+                        Text(reviewData.title)
                             .font(.title3)
                             .fontWeight(.bold)
                     }
@@ -48,7 +59,7 @@ struct DetailView: View {
                         Text("후기")
                             .font(.headline)
                             .foregroundColor(.secondary)
-                        Text(review.content)
+                        Text(reviewData.content)
                             .font(.body)
                     }
                     .padding()
@@ -59,22 +70,22 @@ struct DetailView: View {
                     
                     // 식당 정보
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(review.restaurantName)
+                        Text(reviewData.restaurantName)
                             .font(.title3)
                             .fontWeight(.bold)
-                        Text(review.restaurantAddress)
+                        Text(reviewData.restaurantAddress)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         HStack(spacing: 4) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(.yellow)
-                            Text(review.rating.oneDecimalString)
+                            Text(reviewData.rating.oneDecimalString)
                                 .font(.subheadline)
-                            Text(formattedDate(review.date))
+                            Text(formattedDate(reviewData.date))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
-                        DetailMapView(latitude: review.latitude, longitude: review.longitude)
+                        DetailMapView(latitude: reviewData.latitude, longitude: reviewData.longitude)
                             .frame(height: 150)
                             .cornerRadius(12)
                     }
@@ -87,113 +98,77 @@ struct DetailView: View {
                 .background(ColorSet.primary.color)
             }
         }
-        .edgesIgnoringSafeArea(.top)
-        .background(ColorSet.primary.color.ignoresSafeArea())
+        .toolbar(.hidden, for: .tabBar)
+        .ignoresSafeArea(edges: .top)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            setTransparentBackButton()
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(Color.black)
+                        .bold()
+                        .padding(8)
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    showingActionSheet = true
+                }) {
+                    Image(systemName: "ellipsis")
+                        .foregroundColor(Color.black)
+                        .bold()
+                        .padding(8)
+                }
+            }
+        }
+        .actionSheet(isPresented: $showingActionSheet) {
+            ActionSheet(title: Text("리뷰 관리"), buttons: [
+                .destructive(Text("삭제")) { showingDeleteAlert = true },
+                .cancel(Text("취소"))
+            ])
+        }
+        .alert(isPresented: $showingDeleteAlert) {
+            Alert(
+                title: Text("리뷰 삭제"),
+                message: Text("이 리뷰를 삭제하시겠습니까?"),
+                primaryButton: .default(Text("취소")) {
+                    showingDeleteAlert = false
+                }, secondaryButton: .destructive(Text("삭제")) {
+                    deleteReview()
+                }
+            )
         }
         .onDisappear {
-            resetNavigationBar()
+            if isDeleted {
+                // HomeView에서 리뷰 갱신을 처리할 수 있도록 설정
+                NotificationCenter.default.post(name: NSNotification.Name("RefreshReviews"), object: nil)
+            }
         }
     }
     
-    private func setTransparentBackButton() {
+    private func deleteReview() {
+        DispatchQueue.main.async {
+            if let review = self.reviewRepository.fetch(by: self.reviewData.id) {
+                self.reviewRepository.delete(review)
+                self.isDeleted = true
+                presentationMode.wrappedValue.dismiss()
+                if !path.isEmpty {
+                    path.removeLast(path.count)
+                }
+            }
+        }
+    }
+    
+    private func setupNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear
-        appearance.shadowColor = .clear
-        
-        // Back 버튼의 텍스트를 투명하게 설정
-        let backButtonAppearance = UIBarButtonItemAppearance()
-        backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
-        backButtonAppearance.highlighted.titleTextAttributes = [.foregroundColor: UIColor.clear]
-        appearance.backButtonAppearance = backButtonAppearance
-        
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
-    
-    // 기본 내비게이션 바 스타일로 복원
-    private func resetNavigationBar() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
-}
-extension UINavigationBar {
-    static func changeAppearance(clear: Bool) {
-        let appearance = UINavigationBarAppearance()
-        
-        if clear {
-            appearance.configureWithTransparentBackground()
-        } else {
-            appearance.configureWithDefaultBackground()
-        }
-        
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
-}
-struct HorizontalScrollViews: View {
-    @Binding var currentIndex: Int
-    @State private var reviewImages: [Image] = []
-    @State private var offset: CGFloat = 0
-    @GestureState private var translation: CGFloat = 0
-    var review: Review
-    
-    var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                HStack(spacing: 0) {
-                    ForEach(reviewImages.indices, id: \.self) { index in
-                        reviewImages[index]
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: geometry.size.width, height: 300)
-                            .clipped()
-                    }
-                }
-                .offset(x: -CGFloat(currentIndex) * geometry.size.width + offset + translation)
-                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: offset)
-                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: translation)
-                .gesture(
-                    DragGesture()
-                        .updating($translation) { value, state, _ in
-                            state = value.translation.width
-                        }
-                        .onEnded { value in
-                            let threshold: CGFloat = geometry.size.width * 0.1
-                            if value.translation.width < -threshold {
-                                currentIndex = min(currentIndex + 1, reviewImages.count - 1)
-                            } else if value.translation.width > threshold {
-                                currentIndex = max(currentIndex - 1, 0)
-                            }
-                            offset = 0
-                        }
-                )
-                
-                PageControl(numberOfPages: reviewImages.count, currentIndex: $currentIndex)
-                    .padding(.top, 8)
-            }
-        }
-        //        .frame(height: 300)
-        .clipped()
-        .task {
-            loadImages()
-        }
-    }
-    
-    private func loadImages() {
-        reviewImages = review.imagePaths.compactMap { imagePath in
-            if let uiImage = ImageManager.shared.loadImageFromDisk(imageName: imagePath) {
-                return Image(uiImage: uiImage)
-            }
-            return nil
-        }
     }
 }
 struct MapLocation: Identifiable {
