@@ -55,13 +55,20 @@ final class ReviewRepository {
     }
     
     func delete(_ review: Review) {
-        do {
-            try realm.write {
-                realm.delete(review)
+        autoreleasepool {
+            do {
+                let realm = try Realm()
+                try realm.write {
+                    // 이미지 파일 삭제
+                    for imagePath in review.imagePaths {
+                        ImageManager.shared.deleteImageFromDisk(imageName: imagePath)
+                    }
+                    realm.delete(review)
+                }
                 print("Review deleted successfully.")
+            } catch {
+                print("Error deleting Review: \(error)")
             }
-        } catch {
-            print("Error deleting Review: \(error)")
         }
     }
     
@@ -95,13 +102,18 @@ final class ReviewRepository {
             print("Error saving review with images: \(error)")
         }
     }
-    func fetchLatestFive() -> [Review] {
-          let reviews = realm.objects(Review.self)
-              .sorted(byKeyPath: "date", ascending: false)
-              .prefix(5)
-        print(reviews)
-          return Array(reviews)
-      }
+    func fetchLatestFive() -> [ReviewData] {
+        let reviews = realm.objects(Review.self)
+            .sorted(byKeyPath: "date", ascending: false)
+            .prefix(5)
+        
+        // LazyMapSequence를 명시적으로 배열로 변환
+        let reviewDataList = Array(reviews.map { review in
+            return ReviewData(from: review)
+        })
+        
+        return reviewDataList
+    }
     func detectRealmURL() {
         print("Realm file path: \(realm.configuration.fileURL?.absoluteString ?? "No file URL")")
     }

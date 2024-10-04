@@ -9,6 +9,7 @@ import SwiftUI
 
 enum ColorSet {
     case primary
+    case accent
     case lightGray
     case lightMint
     case lightBlue
@@ -17,11 +18,11 @@ enum ColorSet {
     case darkGray
     case darkNavy
     case cream
-
+    case tab
     var color: Color {
         switch self {
         case .primary:
-            return Color(hex: "f7f4ea")
+            return Color(hex: "f5f5f5") //f7f4ea 메인 배경색
         case .lightGray:
             return Color(red: 240/255, green: 240/255, blue: 240/255) // #F0F0F0
         case .lightMint:
@@ -38,6 +39,10 @@ enum ColorSet {
             return Color(red: 52/255, green: 73/255, blue: 94/255)    // #34495E
         case .cream:
             return Color(red: 255/255, green: 248/255, blue: 231/255) // #FFF8E7
+        case .accent:
+            return Color(hex: "f58402") //플로팅
+        case .tab:
+            return Color(hex: "f58402")// 탭뷰
         }
     }
 }

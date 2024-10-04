@@ -8,7 +8,7 @@
 import RealmSwift
 import Foundation
 
-class Review: Object {
+class Review: Object, Identifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var title: String
     @Persisted var rating: Double
@@ -22,7 +22,7 @@ class Review: Object {
     @Persisted var category: String?
     
     convenience init(title: String, rating: Double, date: Date, content: String, restaurantName: String, restaurantAddress: String, latitude: String, longitude: String, imagePaths: [String], category: String? = nil) {
-        self.init() // 지정된 초기화 메서드를 호출
+        self.init() 
         self.title = title
         self.rating = rating
         self.date = date
