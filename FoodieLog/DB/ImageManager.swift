@@ -47,4 +47,16 @@ class ImageManager {
     private func getDocumentsDirectory() -> URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
+    func deleteImageFromDisk(imageName: String) {
+            let fileManager = FileManager.default
+            if let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+                let fileURL = documentDirectory.appendingPathComponent(imageName)
+                do {
+                    try fileManager.removeItem(at: fileURL)
+                    print("Image deleted successfully: \(imageName)")
+                } catch {
+                    print("Error deleting image: \(error)")
+                }
+            }
+        }
 }
