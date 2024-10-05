@@ -60,6 +60,7 @@ struct CustomTextFieldView: View {
     }
 }
 struct AddPostView: View {
+    @Environment(\.presentationMode) var presentationMode
     @State private var visitDate = Date()
     @State private var isShowingDatePicker = false
     @State var rating: Double
@@ -78,108 +79,145 @@ struct AddPostView: View {
     private var isSaveButtonEnabled: Bool {
         !title.isEmpty && !selectedImages.isEmpty && selectedPlace != nil
     }
+    
     @State private var shouldDismiss = false
+    init(rating: Double, selectedPlace: Binding<Place?>, path: Binding<NavigationPath>) {
+        self._rating = State(initialValue: rating)
+        self._selectedPlace = selectedPlace
+        self._path = path
+        setupNavigationBarAppearance()
+    }
     var body: some View {
-        ScrollView {
-            HStack {
-                Text(selectedPlace?.name ?? "")
-                    .font(.headline)
-                Image(systemName: "star.fill")
-                    .font(.caption)
-                    .foregroundColor(.yellow)
-                    .padding(.leading, -4)
-                Text(rating.oneDecimalString)
-                    .font(.caption)
-                    .padding(.leading, -6)
-                Spacer()
-                
-            }
-            .padding(.horizontal)
-            VStack {
-                MapView(selectedPlace: $selectedPlace)
-                    .frame(width: 360, height: 80)
-                    .cornerRadius(8)
-                    .padding(.leading, 0)
-                Spacer()
-            }
-            .padding(.horizontal)
-            VStack(spacing: 20) {
-                CustomTextFieldView(title: $title)
-                    .padding(.horizontal)
-                dateSelectionView
-                    .padding(.horizontal)
-                ContentView(content: $content)
-                    .padding(.horizontal)
-                photoView
-                    .padding(.horizontal)
-            }
-            .padding(.top)
-        }
-        .navigationTitle("후기 등록")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                saveButton
-            }
-        }
-        .onTapGesture {
-            hideKeyboard()
-        }
-        .sheet(isPresented: $isShowingDatePicker) {
-            NavigationView {
+        ZStack {
+            ColorSet.primary.color.ignoresSafeArea()
+            ScrollView {
+                HStack {
+                    Text(selectedPlace?.name ?? "")
+                        .font(.headline)
+                    Image(systemName: "star.fill")
+                        .font(.caption)
+                        .foregroundColor(.yellow)
+                        .padding(.leading, -4)
+                    Text(rating.oneDecimalString)
+                        .font(.caption)
+                        .padding(.leading, -6)
+                    Spacer()
+                    
+                }
+                .padding(.horizontal)
+                .padding(.top, 16)
+                VStack {
+                    MapView(selectedPlace: $selectedPlace)
+                        .frame(width: 360, height: 80)
+                        .cornerRadius(8)
+                        .padding(.leading, 0)
+                    Spacer()
+                }
+                .padding(.horizontal)
                 VStack(spacing: 20) {
-                    DatePicker(
-                        "날짜 선택",
-                        selection: $visitDate,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(GraphicalDatePickerStyle())
-                    .accentColor(.purple)
-                    .padding()
+                    CustomTextFieldView(title: $title)
+                        .padding(.horizontal)
+                    dateSelectionView
+                        .padding(.horizontal)
+                    ContentView(content: $content)
+                        .padding(.horizontal)
+                    photoView
+                        .padding(.horizontal)
                 }
-                .navigationBarTitle("날짜 선택", displayMode: .inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            isShowingDatePicker = false
-                        } label: {
-                            Text("완료")
-                                .foregroundStyle(.black)
+                .padding(.top)
+            }
+            .navigationTitle("후기 등록")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(Color.black)
+//                            .foregroundColor(Color(hex: "B5E5CF"))
+                            .padding(8)
+                    }
+                }
+                ToolbarItem(placement: .principal) {
+                    Text("후기 등록")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    saveButton
+                }
+            }
+            .toolbarBackground(ColorSet.primary.color, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .onTapGesture {
+                hideKeyboard()
+            }
+            .sheet(isPresented: $isShowingDatePicker) {
+                NavigationView {
+                    ZStack {
+                        ColorSet.primary.color.ignoresSafeArea()
+                        VStack(spacing: 20) {
+                            DatePicker(
+                                "날짜 선택",
+                                selection: $visitDate,
+                                displayedComponents: .date
+                            )
+                            .datePickerStyle(GraphicalDatePickerStyle())
+                            .accentColor(Color(hex: "f58402"))
+                            .environment(\.locale, Locale(identifier: String(Locale.preferredLanguages[0]))) //설정 언어 첫번째
+                            .padding()
+                            
                         }
                     }
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            isShowingDatePicker = false
-                        } label: {
-                            Text("취소")
-                                .foregroundStyle(.red)
+                    .navigationBarTitle("날짜 선택", displayMode: .inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                isShowingDatePicker = false
+                            } label: {
+                                Text("완료")
+                                    .foregroundStyle(.black)
+                                    .bold()
+                            }
+                        }
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button {
+                                isShowingDatePicker = false
+                            } label: {
+                                Text("취소")
+                                    .foregroundStyle(.red)
+                                    .bold()
+                            }
                         }
                     }
                 }
+                .presentationDetents([.medium, .large])
             }
-            .presentationDetents([.medium, .large])
-        }
-        .sheet(isPresented: $isShowSheet) {
-            SearchRestaurantsView(selectedPlace: $selectedPlace, isShowSheet: $isShowSheet)
-        }
-        .sheet(isPresented: $isPhotosPickerPresented) {
-            PhotosPicker(selection: $selectedPhotos, maxSelectionCount: 5, matching: .images) {
-                Text("Select Photos")
+            .sheet(isPresented: $isShowSheet) {
+                SearchRestaurantsView(selectedPlace: $selectedPlace, isShowSheet: $isShowSheet)
             }
-            .onChange(of: selectedPhotos) { newPhotos in
-                loadPhotos(from: newPhotos)
-            }
-        }
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("알림"),
-                message: Text(alertMessage),
-                dismissButton: .default(Text("확인")) {
-                    if alertMessage == "리뷰가 성공적으로 저장되었습니다." {
-                        path.removeLast(path.count)
-                    }
+            .sheet(isPresented: $isPhotosPickerPresented) {
+                PhotosPicker(selection: $selectedPhotos, maxSelectionCount: 5, matching: .images) {
+                    Text("Select Photos")
                 }
-            )
+                .onChange(of: selectedPhotos) { newPhotos in
+                    loadPhotos(from: newPhotos)
+                }
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("알림"),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("확인")) {
+                        if alertMessage == "리뷰가 성공적으로 저장되었습니다." {
+                            path.removeLast(path.count)
+                        }
+                    }
+                )
+            }
+            
         }
     }
     
@@ -187,7 +225,7 @@ struct AddPostView: View {
     
     private var photoView: some View {
         VStack(alignment: .leading) {
-            Text("사진 등록")
+            Text("사진 등록 \(selectedImages.count)/5")
                 .font(.headline)
                 .foregroundColor(.primary)
                 .padding(.bottom, 2)
@@ -273,26 +311,11 @@ struct AddPostView: View {
                     .stroke(Color.gray.opacity(0.2), lineWidth: 1)
             )
         }
-    }
-    
-    private func loadPhotos(from items: [PhotosPickerItem]) {
-        selectedImages.removeAll()
-        for item in items {
-            item.loadTransferable(type: Data.self) { result in
-                switch result {
-                case .success(let data):
-                    if let data = data, let image = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            selectedImages.append(image)
-                        }
-                    }
-                case .failure(let error):
-                    print("사진 로드 실패: \(error)")
-                }
-            }
+        .onChange(of: selectedPhotos) { newPhotos in
+            // 선택한 사진을 다시 로드하도록 만듭니다
+            loadPhotos(from: newPhotos)
         }
     }
-    
     private func deleteImage(at index: Int) {
         selectedImages.remove(at: index)
         if index < selectedPhotos.count {
@@ -317,32 +340,57 @@ struct AddPostView: View {
                         .foregroundColor(.gray)
                 }
                 .padding()
+                .frame(height: 52)
+                .cornerRadius(8)
+                .background(Color.gray.opacity(0.1))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                 )
-                .frame(height: 52)
                 .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
-                .cornerRadius(8)
+                
             }
         }
     }
     
+    private var saveButton: some View {
+        Button {
+            saveReviewToRealm()
+            shouldDismiss = true
+        } label: {
+            Text("저장")
+                .foregroundColor(isSaveButtonEnabled ? .black : .gray)
+        }
+        .disabled(!isSaveButtonEnabled)
+    }
+    private func loadPhotos(from items: [PhotosPickerItem]) {
+        // 먼저 배열을 초기화
+        selectedImages.removeAll()
+        selectedPhotos.removeAll()
+
+        for item in items {
+            item.loadTransferable(type: Data.self) { result in
+                switch result {
+                case .success(let data):
+                    if let data = data, let image = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            if self.selectedImages.count < 5 {
+                                self.selectedImages.append(image)
+                            }
+                        }
+                    }
+                case .failure(let error):
+                    print("사진 로드 실패: \(error)")
+                }
+            }
+        }
+    }
+
+    
+    
     private func saveReviewToRealm() {
         guard let selectedPlace = selectedPlace else {
             alertMessage = "식당 정보가 필요합니다."
-            showAlert = true
-            return
-        }
-        
-        if title.isEmpty {
-            alertMessage = "제목을 입력해주세요."
-            showAlert = true
-            return
-        }
-        
-        if selectedImages.isEmpty {
-            alertMessage = "최소 한 장의 사진을 선택해주세요."
             showAlert = true
             return
         }
@@ -368,15 +416,16 @@ struct AddPostView: View {
         showAlert = true
     }
     
-    private var saveButton: some View {
-        Button {
-            saveReviewToRealm()
-            shouldDismiss = true
-        } label: {
-            Text("저장")
-                .foregroundColor(isSaveButtonEnabled ? .black : .gray)
-        }
-        .disabled(!isSaveButtonEnabled)
+    private func setupNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(ColorSet.primary.color)
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
     }
 }
 

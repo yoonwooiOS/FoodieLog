@@ -6,13 +6,30 @@
 //
 
 import SwiftUI
-
-@main
-struct MapViewTestApp: App {
-    var body: some Scene {
-        WindowGroup {
+struct LaunchScreenView: View {
+    @State private var isActive = false
+    
+    var body: some View {
+        if isActive {
             HomeTabView()
+        } else {
+            SplashView()
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation {
+                            self.isActive = true
+                        }
+                    }
+                }
         }
     }
 }
 
+@main
+struct FoodieLogApp: App {
+    var body: some Scene {
+        WindowGroup {
+            LaunchScreenView()
+        }
+    }
+}

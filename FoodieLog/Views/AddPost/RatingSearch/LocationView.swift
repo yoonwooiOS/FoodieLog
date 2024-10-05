@@ -20,8 +20,8 @@ struct LocationView: View {
                     .padding(.top, 10)
             }
             .frame(width: 320, height: 100)
-            .cornerRadius(20)
-            .background(Color.gray.opacity(0.1))
+            .background(Color.white)
+            .cornerRadius(10)
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.gray.opacity(0.2), lineWidth: 1)
