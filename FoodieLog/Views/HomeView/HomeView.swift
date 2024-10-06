@@ -10,11 +10,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Binding var path: NavigationPath
-    @StateObject var locationManager = LocationManager()
-    @State private var reviews: [ReviewData] = []
-    @State private var isLoading = true
-    private let reviewRepository = ReviewRepository()
-    
+    @StateObject private var viewModel = HomeViewModel()
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
@@ -27,7 +23,7 @@ struct HomeView: View {
                         .padding(.bottom, 16)
                     
                     ScrollView(showsIndicators: false) {
-                        if isLoading {
+                        if viewModel.output.isLoading {
                             ProgressView("")
                                 .padding()
                         } else {
@@ -39,11 +35,10 @@ struct HomeView: View {
                                     .padding(.leading, 20)
                                     .padding(.bottom, -20)
                                 
-                                if reviews.isEmpty {
+                                if viewModel.output.reviews.isEmpty {
                                     emptyCardView
-                                    
                                 } else {
-                                    HorizontalScrollView(reviews: $reviews, path: $path)
+                                    HorizontalScrollView(reviews: .constant(viewModel.output.reviews), path: $path)
                                         .frame(height: 300)
                                 }
                                 
@@ -55,21 +50,16 @@ struct HomeView: View {
                                         .padding(.leading, 20)
                                         .padding(.bottom, -20)
                                     
-                                    if locationManager.authorizationStatus == .authorizedWhenInUse ||
-                                        locationManager.authorizationStatus == .authorizedAlways {
+                                    if viewModel.output.locationAuthorizationStatus == .authorizedWhenInUse ||
+                                        viewModel.output.locationAuthorizationStatus == .authorizedAlways {
                                         NearByReStaurantView()
-                                            .environmentObject(locationManager)
-                                    } else {
-                                        //                                        Text("위치 권한을 허용해주세요.")
-                                        //                                            .padding(.leading, 20)
-                                        //                                            .foregroundColor(.secondary)
+                                            .environmentObject(viewModel.locationManager)
                                     }
                                 }
                             }
                         }
                     }
                 }
-                
                 // Floating Button
                 VStack {
                     Spacer()
@@ -98,27 +88,14 @@ struct HomeView: View {
                 }
             }
             .onAppear {
-                NotificationCenter.default.addObserver(forName: NSNotification.Name("RefreshReviews"), object: nil, queue: .main) { _ in
-                    refreshReviews()
-                }
-                refreshReviews()
-            }
-            .onDisappear {
-                NotificationCenter.default.removeObserver(self, name: NSNotification.Name("RefreshReviews"), object: nil)
+                viewModel.action(.viewAppeared)
             }
             .onChange(of: path) { _ in
-                
-                refreshReviews()
+                viewModel.action(.refreshRequested)
             }
             .background(ColorSet.primary.color)
             .navigationBarHidden(true)
         }
-    }
-    
-    private func refreshReviews() {
-        locationManager.requestLocationPermission()
-        reviews = reviewRepository.fetchLatestFive()
-        isLoading = false
     }
     
     private var emptyCardView: some View {
@@ -130,7 +107,7 @@ struct HomeView: View {
                         .font(.headline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
-                        .padding() // 내부 패딩
+                        .padding()
                 )
         }
         .frame(maxWidth: .infinity, minHeight: 250)
