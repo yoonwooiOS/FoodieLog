@@ -10,22 +10,25 @@ import RealmSwift
 
 struct UserPostView: View {
     @Binding var path: NavigationPath
-    @State private var reviews: [ReviewData] = []
-    let realmRepository = ReviewRepository()
+    @StateObject private var viewModel = UserPostViewModel()
     
     var body: some View {
         NavigationStack {
             ZStack {
+                ColorSet.primary.color.ignoresSafeArea()
                 VStack(alignment: .leading, spacing: 0) {
                     Text("등록한 리뷰")
                         .font(.system(size: 30, weight: .bold))
                         .foregroundColor(.black)
-                        .padding(.leading, 20)
+                        .padding(.leading)
                         .padding(.top, 16)
                         .padding(.bottom, 16)
                     
                     ScrollView {
-                        if reviews.isEmpty {
+                        if viewModel.output.isLoading {
+                            ProgressView("로딩중..")
+                                .padding()
+                        } else if viewModel.output.reviews.isEmpty {
                             VStack {
                                 Spacer()
                                 Text("등록한 리뷰가 없습니다.")
@@ -38,7 +41,7 @@ struct UserPostView: View {
                             .padding()
                         } else {
                             LazyVStack(alignment: .leading, spacing: 16) {
-                                ForEach(reviews, id: \.id) { review in
+                                ForEach(viewModel.output.reviews, id: \.id) { review in
                                     NavigationLink(destination: DetailView(reviewData: review, path: $path)) {
                                         ReviewCardView(review: review)
                                     }
@@ -49,19 +52,15 @@ struct UserPostView: View {
                     }
                 }
             }
-            .background(ColorSet.primary.color)
+//            .background(ColorSet.primary.color)
             .onAppear {
-                fetchReviews()
+                viewModel.action(.viewAppeared)
             }
             .onChange(of: path) { _ in
-                           fetchReviews()
-                       }
+                viewModel.action(.refreshRequested)
+            }
             .navigationBarHidden(true)
         }
-    }
-    
-    private func fetchReviews() {
-        reviews = realmRepository.fetchAll().map { ReviewData(from: $0) }
     }
 }
 
