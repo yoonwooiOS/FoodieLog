@@ -107,7 +107,7 @@ final class ReviewRepository {
             .sorted(byKeyPath: "date", ascending: false)
             .prefix(5)
         
-        // LazyMapSequence를 명시적으로 배열로 변환
+        
         let reviewDataList = Array(reviews.map { review in
             return ReviewData(from: review)
         })

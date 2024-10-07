@@ -8,7 +8,7 @@
 import RealmSwift
 import Foundation
 
-class Review: Object, Identifiable {
+final class Review: Object, Identifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var title: String
     @Persisted var rating: Double
