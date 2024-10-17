@@ -11,88 +11,31 @@ import MapKit
 struct DetailView: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var path: NavigationPath
+    @StateObject private var viewModel: DetailViewModel
     @State private var currentIndex: Int = 0
-    @State private var showingActionSheet = false
-    @State private var showingEditView = false
-    @State private var showingDeleteAlert = false
-    @State private var reviewData: ReviewData
-    @State private var isDeleted = false
-    let reviewRepository = ReviewRepository()
     
     init(reviewData: ReviewData, path: Binding<NavigationPath>) {
         self._path = path
-        self._reviewData = State(initialValue: reviewData)
+        self._viewModel = StateObject(wrappedValue: DetailViewModel(reviewData: reviewData))
         setupNavigationBarAppearance()
     }
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
-                // 이미지 슬라이더
                 ZStack(alignment: .bottom) {
-                    DetailViewHorizontalScrollView(currentIndex: $currentIndex, review: reviewData)
+                    DetailViewHorizontalScrollView(currentIndex: $currentIndex, review: viewModel.output.reviewData)
                         .frame(height: 300)
-                    
-                    PageControl(numberOfPages: reviewData.imagePaths.count, currentIndex: $currentIndex)
+                        .ignoresSafeArea(edges: .top)
+                    PageControl(numberOfPages: viewModel.output.reviewData.imagePaths.count, currentIndex: $currentIndex)
                         .padding(.bottom, 8)
                 }
                 .ignoresSafeArea(edges: .top)
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    // 제목
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("제목")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        Text(reviewData.title)
-                            .font(.title3)
-                            .fontWeight(.bold)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.systemBackground))
-                    .cornerRadius(12)
-                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-                    
-                    // 후기
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("후기")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        Text(reviewData.content)
-                            .font(.body)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.systemBackground))
-                    .cornerRadius(12)
-                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-                    
-                    // 식당 정보
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(reviewData.restaurantName)
-                            .font(.title3)
-                            .fontWeight(.bold)
-                        Text(reviewData.restaurantAddress)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                        HStack(spacing: 4) {
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.yellow)
-                            Text(reviewData.rating.oneDecimalString)
-                                .font(.subheadline)
-                            Text(formattedDate(reviewData.date))
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                        DetailMapView(latitude: reviewData.latitude, longitude: reviewData.longitude)
-                            .frame(height: 150)
-                            .cornerRadius(12)
-                    }
-                    .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(12)
-                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+                    titleSection
+                    reviewSection
+                    restaurantInfoSection
                 }
                 .padding()
                 .background(ColorSet.primary.color)
@@ -103,63 +46,119 @@ struct DetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(Color.black)
-                        .bold()
-                        .padding(8)
-                }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    showingActionSheet = true
-                }) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(Color.black)
-                        .bold()
-                        .padding(8)
-                }
-            }
+            ToolbarItem(placement: .navigationBarLeading) { backButton }
+            ToolbarItem(placement: .navigationBarTrailing) { moreButton }
         }
-        .actionSheet(isPresented: $showingActionSheet) {
+        .actionSheet(isPresented: .constant(viewModel.output.showingActionSheet)) {
             ActionSheet(title: Text("리뷰 관리"), buttons: [
-                .destructive(Text("삭제")) { showingDeleteAlert = true },
+                .default(Text("편집")) { viewModel.input.editReviewTapped.send()},
+                .destructive(Text("삭제")) { viewModel.input.confirmDeleteTapped.send() },
                 .cancel(Text("취소"))
             ])
         }
-        .alert(isPresented: $showingDeleteAlert) {
+        .alert(isPresented: .constant(viewModel.output.showingDeleteAlert)) {
             Alert(
                 title: Text("리뷰 삭제"),
                 message: Text("이 리뷰를 삭제하시겠습니까?"),
-                primaryButton: .default(Text("취소")) {
-                    showingDeleteAlert = false
-                }, secondaryButton: .destructive(Text("삭제")) {
-                    deleteReview()
+                primaryButton: .default(Text("취소")),
+                secondaryButton: .destructive(Text("삭제")) {
+                    viewModel.input.deleteReviewTapped.send()
                 }
             )
         }
-        .onDisappear {
+        .navigationDestination(isPresented: $viewModel.output.showingEditView, destination: {
+            EditView(reviewId: viewModel.output.reviewData.id, path: $path)
+        })
+        .onAppear { viewModel.input.viewAppeared.send()
+            print(viewModel.output.reviewData.id)}
+        .onChange(of: viewModel.output.isDeleted) { isDeleted in
             if isDeleted {
-                // HomeView에서 리뷰 갱신을 처리할 수 있도록 설정
-                NotificationCenter.default.post(name: NSNotification.Name("RefreshReviews"), object: nil)
+                presentationMode.wrappedValue.dismiss()
+//                if !path.isEmpty {
+//                    path.removeLast(path.count)
+//                }
             }
         }
     }
     
-    private func deleteReview() {
-        DispatchQueue.main.async {
-            if let review = self.reviewRepository.fetch(by: self.reviewData.id) {
-                self.reviewRepository.delete(review)
-                self.isDeleted = true
-                presentationMode.wrappedValue.dismiss()
-                if !path.isEmpty {
-                    path.removeLast(path.count)
-                }
-            }
+    private var backButton: some View {
+        Button(action: {
+            presentationMode.wrappedValue.dismiss()
+        }) {
+            Image(systemName: "chevron.left")
+                .foregroundColor(Color.black)
+                .bold()
+                .padding(8)
         }
+    }
+    
+    private var moreButton: some View {
+        Button(action: {
+            viewModel.input.showActionSheetTapped.send()
+        }) {
+            Image(systemName: "ellipsis")
+                .foregroundColor(Color.black)
+                .bold()
+                .padding(8)
+        }
+    }
+    
+    private var titleSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("제목")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            Text(viewModel.output.reviewData.title)
+                .font(.title3)
+                .fontWeight(.bold)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+    }
+    
+    private var reviewSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("후기")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            Text(viewModel.output.reviewData.content)
+                .font(.body)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+    }
+    
+    private var restaurantInfoSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(viewModel.output.reviewData.restaurantName)
+                .font(.title3)
+                .fontWeight(.bold)
+            Text(viewModel.output.reviewData.restaurantAddress)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            HStack(spacing: 4) {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+                Text(viewModel.output.reviewData.rating.oneDecimalString)
+                    .font(.subheadline)
+                Text(formattedDate(viewModel.output.reviewData.date))
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            DetailMapView(latitude: viewModel.output.reviewData.latitude, longitude: viewModel.output.reviewData.longitude, restaurantName: viewModel.output.reviewData.restaurantName)
+                .frame(height: 150)
+                .cornerRadius(12)
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
     
     private func setupNavigationBarAppearance() {
@@ -171,13 +170,11 @@ struct DetailView: View {
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
 }
-struct MapLocation: Identifiable {
-    let id = UUID()
-    let coordinate: CLLocationCoordinate2D
-}
+
 struct DetailMapView: View {
     var latitude: String
     var longitude: String
+    var restaurantName: String
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
         span: MKCoordinateSpan(latitudeDelta: 0.009, longitudeDelta: 0.009)
@@ -191,7 +188,7 @@ struct DetailMapView: View {
                     Image(systemName: "mappin.circle.fill")
                         .foregroundColor(.red)
                         .font(.title)
-                    Text("Location")
+                    Text(restaurantName)
                         .foregroundColor(.black)
                         .font(.caption)
                 }
@@ -219,4 +216,9 @@ struct DetailMapView: View {
             locations = [MapLocation(coordinate: coordinate)]
         }
     }
+}
+
+struct MapLocation: Identifiable {
+    let id = UUID()
+    let coordinate: CLLocationCoordinate2D
 }

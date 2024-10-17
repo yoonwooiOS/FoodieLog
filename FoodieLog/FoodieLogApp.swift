@@ -8,7 +8,6 @@
 import SwiftUI
 struct LaunchScreenView: View {
     @State private var isActive = false
-    
     var body: some View {
         if isActive {
             HomeTabView()
@@ -24,7 +23,6 @@ struct LaunchScreenView: View {
         }
     }
 }
-
 @main
 struct FoodieLogApp: App {
     var body: some Scene {

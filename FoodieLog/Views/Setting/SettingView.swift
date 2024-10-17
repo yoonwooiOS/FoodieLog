@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingView: View {
     @State private var showingResetAlert: Bool = false
+    let temp: [String] = []
     var body: some View {
         
         VStack(alignment: .leading, spacing: 20) {

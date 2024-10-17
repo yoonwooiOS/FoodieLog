@@ -19,7 +19,6 @@ struct HorizontalScrollView: View {
                 HStack(spacing: 0) {
                     ForEach(reviews, id: \.self) { review in
                         ZStack {
-
                             FoodCardView(reviewData: review, path: $path)
                                 .frame(width: geometry.size.width)
                         }

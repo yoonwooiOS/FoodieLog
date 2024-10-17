@@ -10,6 +10,7 @@ import Cosmos
 import MapKit
 
 
+
 struct RateAndSearchRestaurantsView: View {
     @Binding var path: NavigationPath
     @State private var rating: Double = 0
@@ -79,11 +80,9 @@ struct RateAndSearchRestaurantsView: View {
                         }
                     }
                 }
-                
             }
         }
     }
-    
     private func setupNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -95,9 +94,6 @@ struct RateAndSearchRestaurantsView: View {
         UINavigationBar.appearance().compactAppearance = appearance
     }
     
-    
-    
-    
     private var ratingSection: some View {
         VStack {
             Text("\(rating.oneDecimalString)점")
@@ -107,7 +103,5 @@ struct RateAndSearchRestaurantsView: View {
                 .frame(width: 200, height: 40)
         }
         .padding(.horizontal)
-        //        .background(Color(.systemBackground))
-        //        .cornerRadius(12)
     }
 }

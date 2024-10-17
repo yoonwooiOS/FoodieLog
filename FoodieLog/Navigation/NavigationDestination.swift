@@ -10,4 +10,5 @@ import Foundation
 enum NavigationDestination: Hashable {
     case rateView
     case addPost(rating: Double, place: Place?)
+//    case editReview(ReviewData)
 }

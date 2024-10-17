@@ -10,55 +10,6 @@ import Cosmos
 import MapKit
 import PhotosUI
 
-struct ContentView: View {
-    @Binding var content: String
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            
-            Text("리뷰")
-                .font(.headline)
-                .foregroundColor(.primary)
-            
-            TextEditor(text: $content)
-                .customStyleEditor(placeholder: "후기 작성해주세요", userInput: $content)
-                .background(Color.white)
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                )
-                .frame(height: 150)
-                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
-            
-        }
-        
-    }
-}
-struct CustomTextFieldView: View {
-    @Binding  var title: String
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("제목")
-                .font(.headline)
-                .foregroundColor(.primary)
-                .padding(.bottom, -6)
-            TextField("제목을 입력하세요", text: $title)
-                .font(.system(size: 18))
-                .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-                .background(Color.white)
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                )
-                .frame(maxHeight: .infinity)
-                .frame(height: 60)
-                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
-        }
-    }
-}
 struct AddPostView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var visitDate = Date()
@@ -119,7 +70,7 @@ struct AddPostView: View {
                         .padding(.horizontal)
                     dateSelectionView
                         .padding(.horizontal)
-                    ContentView(content: $content)
+                    ReviewContentView(content: $content)
                         .padding(.horizontal)
                     photoView
                         .padding(.horizontal)
@@ -220,8 +171,6 @@ struct AddPostView: View {
             
         }
     }
-    
-    
     
     private var photoView: some View {
         VStack(alignment: .leading) {
@@ -364,10 +313,8 @@ struct AddPostView: View {
         .disabled(!isSaveButtonEnabled)
     }
     private func loadPhotos(from items: [PhotosPickerItem]) {
-        // 먼저 배열을 초기화
         selectedImages.removeAll()
         selectedPhotos.removeAll()
-
         for item in items {
             item.loadTransferable(type: Data.self) { result in
                 switch result {
@@ -429,3 +376,52 @@ struct AddPostView: View {
     }
 }
 
+struct ReviewContentView: View {
+    @Binding var content: String
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            
+            Text("리뷰")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            TextEditor(text: $content)
+                .customStyleEditor(placeholder: "후기 작성해주세요", userInput: $content)
+                .background(Color.white)
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                )
+                .frame(height: 150)
+                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+            
+        }
+        
+    }
+}
+struct CustomTextFieldView: View {
+    @Binding  var title: String
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("제목")
+                .font(.headline)
+                .foregroundColor(.primary)
+                .padding(.bottom, -6)
+            TextField("제목을 입력하세요", text: $title)
+                .font(.system(size: 18))
+                .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                .background(Color.white)
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                )
+                .frame(maxHeight: .infinity)
+                .frame(height: 60)
+                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+        }
+    }
+}
