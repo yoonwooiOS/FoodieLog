@@ -19,7 +19,7 @@ struct ReviewData: Hashable {
     var latitude: String
     var longitude: String
     var imagePaths: [String]
-    
+    var category: String
     init(from review: Review) {
         self.id = review.id
         self.title = review.title
@@ -31,6 +31,7 @@ struct ReviewData: Hashable {
         self.latitude = review.latitude
         self.longitude = review.longitude
         self.imagePaths = Array(review.imagePaths)
+        self.category = review.category
     }
 
     
@@ -45,6 +46,7 @@ struct ReviewData: Hashable {
         review.latitude = self.latitude
         review.longitude = self.longitude
         review.imagePaths.append(objectsIn: self.imagePaths)
+        review.category = self.category
         return review
     }
 }

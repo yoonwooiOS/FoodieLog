@@ -19,10 +19,10 @@ final class Review: Object, Identifiable {
     @Persisted var latitude: String
     @Persisted var longitude: String
     @Persisted var imagePaths: List<String>
-    @Persisted var category: String?
+    @Persisted var category: String
     
-    convenience init(title: String, rating: Double, date: Date, content: String, restaurantName: String, restaurantAddress: String, latitude: String, longitude: String, imagePaths: [String], category: String? = nil) {
-        self.init() 
+    convenience init(title: String, rating: Double, date: Date, content: String, restaurantName: String, restaurantAddress: String, latitude: String, longitude: String, imagePaths: [String], category: String) {
+        self.init()
         self.title = title
         self.rating = rating
         self.date = date

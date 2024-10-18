@@ -43,12 +43,14 @@ struct FoodCardView: View {
             isNavigationActive = true
         }
         .background(
-                    NavigationLink(destination: DetailView(reviewData: reviewData, path: $path), isActive: $isNavigationActive) {
-                        EmptyView()
-                    }
-                )
+            NavigationLink(destination: DetailView(reviewData: reviewData, path: $path), isActive: $isNavigationActive) {
+                EmptyView()
+            }
+        )
         .onAppear {
             loadImage()
+            print("Review Category: \(reviewData.category)")
+            print(ReviewRepository().detectRealmURL())
         }
     }
     
@@ -57,9 +59,13 @@ struct FoodCardView: View {
             Spacer()
             HStack {
                 Spacer()
+               
                 Text(reviewData.restaurantName)
                     .foregroundStyle(.black)
                     .font(.headline)
+                Text(reviewData.category)
+                    .foregroundStyle(.gray)
+                    .font(.subheadline)
                 Spacer()
             }
             HStack {

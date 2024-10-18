@@ -51,7 +51,7 @@ struct DetailView: View {
         }
         .actionSheet(isPresented: .constant(viewModel.output.showingActionSheet)) {
             ActionSheet(title: Text("리뷰 관리"), buttons: [
-                .default(Text("편집")) { viewModel.input.editReviewTapped.send()},
+//                .default(Text("편집")) { viewModel.input.editReviewTapped.send()},
                 .destructive(Text("삭제")) { viewModel.input.confirmDeleteTapped.send() },
                 .cancel(Text("취소"))
             ])
@@ -116,7 +116,7 @@ struct DetailView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.systemBackground))
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+//        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
     
     private var reviewSection: some View {
@@ -131,14 +131,20 @@ struct DetailView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.systemBackground))
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+//        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
     
     private var restaurantInfoSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(viewModel.output.reviewData.restaurantName)
-                .font(.title3)
-                .fontWeight(.bold)
+            HStack {
+                Text(viewModel.output.reviewData.restaurantName)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                Text(viewModel.output.reviewData.category)
+                    .foregroundStyle(.gray)
+                    .font(.subheadline)
+            }
+           
             Text(viewModel.output.reviewData.restaurantAddress)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
@@ -158,7 +164,7 @@ struct DetailView: View {
         .padding()
         .background(Color(.systemBackground))
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+//        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
     
     private func setupNavigationBarAppearance() {
@@ -200,7 +206,7 @@ struct DetailMapView: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+//        .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
         .task {
             setRegion(latitude: latitude, longitude: longitude)
         }

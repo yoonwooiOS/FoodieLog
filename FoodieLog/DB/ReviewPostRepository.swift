@@ -12,7 +12,6 @@ import UIKit
 final class ReviewRepository {
     private let realm = try! Realm()
     
-    // CRUD operations
     func add(_ review: Review) {
         do {
             try realm.write {

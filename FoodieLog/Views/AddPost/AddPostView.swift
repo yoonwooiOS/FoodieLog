@@ -26,6 +26,8 @@ struct AddPostView: View {
     @State private var alertMessage = ""
     private let reviewRepository = ReviewRepository()
     private let imageManager = ImageManager.shared
+    @State private var selectedCategory: String = ""
+    let foodCategories = ["한식", "중식", "양식", "일식", "패스트푸드", "분식", "간편식", "세계음식", "기타"]
     @Binding var path: NavigationPath
     private var isSaveButtonEnabled: Bool {
         !title.isEmpty && !selectedImages.isEmpty && selectedPlace != nil
@@ -45,6 +47,7 @@ struct AddPostView: View {
                 HStack {
                     Text(selectedPlace?.name ?? "")
                         .font(.headline)
+                    
                     Image(systemName: "star.fill")
                         .font(.caption)
                         .foregroundColor(.yellow)
@@ -68,6 +71,10 @@ struct AddPostView: View {
                 VStack(spacing: 20) {
                     CustomTextFieldView(title: $title)
                         .padding(.horizontal)
+                    
+                    categorySelectionView
+                        .padding(.horizontal)
+                    
                     dateSelectionView
                         .padding(.horizontal)
                     ReviewContentView(content: $content)
@@ -87,7 +94,7 @@ struct AddPostView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .foregroundColor(Color.black)
-//                            .foregroundColor(Color(hex: "B5E5CF"))
+                        //                            .foregroundColor(Color(hex: "B5E5CF"))
                             .padding(8)
                     }
                 }
@@ -235,7 +242,7 @@ struct AddPostView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.gray.opacity(0.2), lineWidth: 1)
             )
-            .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+//            .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
         }
                      .onChange(of: selectedPhotos) { newPhotos in
                          loadPhotos(from: newPhotos)
@@ -260,10 +267,9 @@ struct AddPostView: View {
                     .stroke(Color.gray.opacity(0.2), lineWidth: 1)
             )
         }
-        .onChange(of: selectedPhotos) { newPhotos in
-            // 선택한 사진을 다시 로드하도록 만듭니다
-            loadPhotos(from: newPhotos)
-        }
+                     .onChange(of: selectedPhotos) { newPhotos in
+                         loadPhotos(from: newPhotos)
+                     }
     }
     private func deleteImage(at index: Int) {
         selectedImages.remove(at: index)
@@ -301,7 +307,35 @@ struct AddPostView: View {
             }
         }
     }
-    
+    private var categorySelectionView: some View {
+           VStack(alignment: .leading, spacing: 10) {
+               Text("카테고리")
+                   .font(.headline)
+                   .foregroundColor(.primary)
+               
+               LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 10) {
+                   ForEach(foodCategories, id: \.self) { category in
+                       Button(action: {
+                           selectedCategory = (selectedCategory == category) ? "" : category
+                           print(category)
+                       }) {
+                           Text(category)
+                               .font(.system(size: 14))
+                               .padding(.vertical, 8)
+                               .padding(.horizontal, 12)
+                               .frame(minWidth: 0, maxWidth: .infinity)
+                               .background(selectedCategory == category ? Color.yellow.opacity(0.3) : Color.white)
+                               .foregroundColor(.black)
+                               .cornerRadius(20)
+                               .overlay(
+                                   RoundedRectangle(cornerRadius: 20)
+                                       .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                               )
+                       }
+                   }
+               }
+           }
+       }
     private var saveButton: some View {
         Button {
             saveReviewToRealm()
@@ -316,7 +350,7 @@ struct AddPostView: View {
         selectedImages.removeAll()
         selectedPhotos.removeAll()
         for item in items {
-            item.loadTransferable(type: Data.self) { result in
+            item.loadTransferable(type: Data.self) { result in //MARK: 트러블 슈팅 문제
                 switch result {
                 case .success(let data):
                     if let data = data, let image = UIImage(data: data) {
@@ -332,7 +366,7 @@ struct AddPostView: View {
             }
         }
     }
-
+    
     
     
     private func saveReviewToRealm() {
@@ -351,6 +385,7 @@ struct AddPostView: View {
         review.restaurantAddress = selectedPlace.formattedAddress ?? ""
         review.latitude = String(selectedPlace.geometry.location.lat)
         review.longitude = String(selectedPlace.geometry.location.lng)
+        review.category = selectedCategory
         
         for (index, image) in selectedImages.enumerated() {
             if let imageName = imageManager.saveImageToDisk(image: image, imageName: "review_image_\(index)_\(review.id.stringValue)") {
@@ -358,7 +393,6 @@ struct AddPostView: View {
             }
         }
         reviewRepository.add(review)
-        
         alertMessage = "리뷰가 성공적으로 저장되었습니다."
         showAlert = true
     }
@@ -395,7 +429,7 @@ struct ReviewContentView: View {
                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                 )
                 .frame(height: 150)
-                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+//                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
             
         }
         
@@ -421,7 +455,7 @@ struct CustomTextFieldView: View {
                 )
                 .frame(maxHeight: .infinity)
                 .frame(height: 60)
-                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+//                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
         }
     }
 }
