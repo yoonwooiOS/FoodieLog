@@ -6,25 +6,21 @@
 //
 
 import SwiftUI
-struct LaunchScreenView: View {
-    @State private var isActive = false
-    var body: some View {
-        if isActive {
-            HomeTabView()
-        } else {
-            SplashView()
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                        withAnimation {
-                            self.isActive = true
-                        }
-                    }
-                }
+import RealmSwift
+@main
+struct FoodieLogApp: SwiftUI.App {
+    init() {
+        let config = RealmManager.shared.configuration()
+        Realm.Configuration.defaultConfiguration = config
+        
+        do {
+            _ = try Realm()
+            print("Realm 초기화 성공")
+        } catch {
+            print("Realm 초기화 실패: \(error)")
         }
     }
-}
-@main
-struct FoodieLogApp: App {
+
     var body: some Scene {
         WindowGroup {
             LaunchScreenView()
