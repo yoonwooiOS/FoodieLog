@@ -51,6 +51,7 @@ struct SearchRestaurantsView: View {
                                 }
                             }
                         }
+                        .padding(.top, 0.5)
                     }
                 }
                 .searchable(text: $searchText, prompt: "음식점을 검색하세요")
@@ -81,7 +82,3 @@ struct SearchRestaurantsView: View {
         }
     }
 }
-//
-//#Preview {
-//    SearchRestaurantsView()
-//}

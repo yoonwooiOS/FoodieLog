@@ -8,21 +8,45 @@
 import SwiftUI
 import RealmSwift
 
+enum SortOption: String, CaseIterable {
+    case latest = "최신순"
+    case highestRated = "별점 높은순"
+    case lowestRated = "별점 낮은순"
+}
+
 struct UserPostView: View {
     @Binding var path: NavigationPath
     @StateObject private var viewModel = UserPostViewModel()
+    @State private var selectedSortOption: SortOption = .latest
     
     var body: some View {
         NavigationStack {
             ZStack {
                 ColorSet.primary.color.ignoresSafeArea()
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("등록한 리뷰")
-                        .font(.system(size: 30, weight: .bold))
-                        .foregroundColor(.black)
-                        .padding(.leading)
-                        .padding(.top, 16)
-                        .padding(.bottom, 16)
+                    HStack {
+                        Text("등록한 리뷰")
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundColor(.black)
+                        Spacer()
+                        HStack(spacing: 8) {
+                            Text(selectedSortOption.rawValue)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Menu {
+                                ForEach(SortOption.allCases, id: \.self) { option in
+                                    Button(option.rawValue) {
+                                        selectedSortOption = option
+                                        viewModel.action(.sortRequested(option))
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "arrow.up.arrow.down")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                    }
+                    .padding()
                     
                     ScrollView {
                         if viewModel.output.isLoading {
@@ -52,7 +76,6 @@ struct UserPostView: View {
                     }
                 }
             }
-//            .background(ColorSet.primary.color)
             .onAppear {
                 viewModel.action(.viewAppeared)
             }
@@ -63,7 +86,6 @@ struct UserPostView: View {
         }
     }
 }
-
 struct ReviewCardView: View {
     let review: ReviewData
     
@@ -73,11 +95,16 @@ struct ReviewCardView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Spacer()
-                Text(review.title)
-                    .font(.headline)
-                    .foregroundStyle(.black)
-                    .lineLimit(1)
-                
+                HStack(spacing: 4) {
+                    Text(review.title)
+                        .font(.headline)
+                        .foregroundStyle(.black)
+                        .lineLimit(1)
+                    Spacer()
+                    Text(review.category)
+                        .foregroundStyle(.gray)
+                        .font(.caption)
+                }
                 Text(review.restaurantName)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -94,7 +121,7 @@ struct ReviewCardView: View {
         .padding()
         .background(Color(.systemBackground))
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+        //        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
     
     private var reviewImage: some View {
