@@ -54,6 +54,8 @@
 		99BB7A782CA2A50A00B20C33 /* SearchRestaurantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BB7A772CA2A50A00B20C33 /* SearchRestaurantsView.swift */; };
 		99BB7A7B2CA3E23A00B20C33 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BB7A7A2CA3E23A00B20C33 /* View+Extension.swift */; };
 		99BB7A7D2CA3FB8A00B20C33 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BB7A7C2CA3FB8A00B20C33 /* RatingView.swift */; };
+		99C74A0D2CC244F8006E5750 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C74A0C2CC244F8006E5750 /* RealmManager.swift */; };
+		99C74A102CC24A4C006E5750 /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C74A0F2CC24A4C006E5750 /* LaunchScreenView.swift */; };
 		99D7B1FB2CAD0580007E3C69 /* NavigationDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D7B1FA2CAD0580007E3C69 /* NavigationDestination.swift */; };
 		99F132AB2C987469001A63A1 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F132AA2C987469001A63A1 /* HomeTabView.swift */; };
 		99F132AE2C9BC08F001A63A1 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F132AD2C9BC08F001A63A1 /* CalendarView.swift */; };
@@ -120,6 +122,8 @@
 		99BB7A772CA2A50A00B20C33 /* SearchRestaurantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRestaurantsView.swift; sourceTree = "<group>"; };
 		99BB7A7A2CA3E23A00B20C33 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		99BB7A7C2CA3FB8A00B20C33 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
+		99C74A0C2CC244F8006E5750 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
+		99C74A0F2CC24A4C006E5750 /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
 		99D7B1FA2CAD0580007E3C69 /* NavigationDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDestination.swift; sourceTree = "<group>"; };
 		99F132AA2C987469001A63A1 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
 		99F132AD2C9BC08F001A63A1 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
@@ -194,6 +198,7 @@
 		990790382C931C930066920B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				99C74A0E2CC24A3F006E5750 /* SplashView */,
 				997DCBF72CACCA6100D5E7F8 /* UserPost */,
 				997DCBF42CACC96500D5E7F8 /* Setting */,
 				990790492C94030D0066920B /* Map */,
@@ -231,6 +236,7 @@
 				992205A02CAA042A00FFAC24 /* ReviewPostRepository.swift */,
 				992205A22CAA16A600FFAC24 /* ImageManager.swift */,
 				997C8B602CAE39ED0059605D /* ReviewData.swift */,
+				99C74A0C2CC244F8006E5750 /* RealmManager.swift */,
 			);
 			path = DB;
 			sourceTree = "<group>";
@@ -343,6 +349,14 @@
 				997C8B5C2CAE03450059605D /* UINavigationController+Extension.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		99C74A0E2CC24A3F006E5750 /* SplashView */ = {
+			isa = PBXGroup;
+			children = (
+				99C74A0F2CC24A4C006E5750 /* LaunchScreenView.swift */,
+			);
+			path = SplashView;
 			sourceTree = "<group>";
 		};
 		99D7B1F92CAD0575007E3C69 /* Navigation */ = {
@@ -466,6 +480,7 @@
 				99BB7A7D2CA3FB8A00B20C33 /* RatingView.swift in Sources */,
 				99F132AE2C9BC08F001A63A1 /* CalendarView.swift in Sources */,
 				995E8AAB2CB25E2100C0F0D1 /* UserPostViewModel.swift in Sources */,
+				99C74A102CC24A4C006E5750 /* LaunchScreenView.swift in Sources */,
 				99BB7A232C9C09C700B20C33 /* NetworkManager.swift in Sources */,
 				992205A52CAA196500FFAC24 /* PageControl.swift in Sources */,
 				997C8B5B2CAD43D80059605D /* ColorSet.swift in Sources */,
@@ -481,6 +496,7 @@
 				997DCBF62CACC96E00D5E7F8 /* SettingView.swift in Sources */,
 				992205A72CAA1D6400FFAC24 /* Double+Extension.swift in Sources */,
 				9922059C2CA8219700FFAC24 /* CustomTextEditor.swift in Sources */,
+				99C74A0D2CC244F8006E5750 /* RealmManager.swift in Sources */,
 				997DCBF32CACC1F100D5E7F8 /* Color+Extension.swift in Sources */,
 				992205922CA54A8700FFAC24 /* DetailView.swift in Sources */,
 				9922059F2CA9843E00FFAC24 /* Review.swift in Sources */,
@@ -643,7 +659,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yw.FoodieLog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -681,7 +697,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yw.FoodieLog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
