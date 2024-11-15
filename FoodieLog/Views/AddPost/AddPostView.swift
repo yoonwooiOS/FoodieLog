@@ -9,6 +9,7 @@ import SwiftUI
 import Cosmos
 import MapKit
 import PhotosUI
+import WidgetKit
 
 struct AddPostView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -29,6 +30,7 @@ struct AddPostView: View {
     @State private var selectedCategory: String = ""
     let foodCategories = ["한식", "중식", "양식", "일식", "패스트푸드", "분식", "간편식", "세계음식", "기타"]
     @Binding var path: NavigationPath
+    private var postDataManager = PostDataManager()
     private var isSaveButtonEnabled: Bool {
         !title.isEmpty && !selectedImages.isEmpty && selectedPlace != nil
     }
@@ -242,7 +244,7 @@ struct AddPostView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.gray.opacity(0.2), lineWidth: 1)
             )
-//            .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+            //            .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
         }
                      .onChange(of: selectedPhotos) { newPhotos in
                          loadPhotos(from: newPhotos)
@@ -308,34 +310,34 @@ struct AddPostView: View {
         }
     }
     private var categorySelectionView: some View {
-           VStack(alignment: .leading, spacing: 10) {
-               Text("카테고리")
-                   .font(.headline)
-                   .foregroundColor(.primary)
-               
-               LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 10) {
-                   ForEach(foodCategories, id: \.self) { category in
-                       Button(action: {
-                           selectedCategory = (selectedCategory == category) ? "" : category
-                           print(category)
-                       }) {
-                           Text(category)
-                               .font(.system(size: 14))
-                               .padding(.vertical, 8)
-                               .padding(.horizontal, 12)
-                               .frame(minWidth: 0, maxWidth: .infinity)
-                               .background(selectedCategory == category ? Color.yellow.opacity(0.3) : Color.white)
-                               .foregroundColor(.black)
-                               .cornerRadius(20)
-                               .overlay(
-                                   RoundedRectangle(cornerRadius: 20)
-                                       .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                               )
-                       }
-                   }
-               }
-           }
-       }
+        VStack(alignment: .leading, spacing: 10) {
+            Text("카테고리")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 10) {
+                ForEach(foodCategories, id: \.self) { category in
+                    Button(action: {
+                        selectedCategory = (selectedCategory == category) ? "" : category
+                        print(category)
+                    }) {
+                        Text(category)
+                            .font(.system(size: 14))
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .background(selectedCategory == category ? Color.yellow.opacity(0.3) : Color.white)
+                            .foregroundColor(.black)
+                            .cornerRadius(20)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                    }
+                }
+            }
+        }
+    }
     private var saveButton: some View {
         Button {
             saveReviewToRealm()
@@ -387,12 +389,54 @@ struct AddPostView: View {
         review.longitude = String(selectedPlace.geometry.location.lng)
         review.category = selectedCategory
         
+        func resizeAndCompressImage(_ image: UIImage, targetSize: CGSize, compressionQuality: CGFloat) -> Data? {
+            // 이미지 크기 조정
+            let renderer = UIGraphicsImageRenderer(size: targetSize)
+            let resizedImage = renderer.image { _ in
+                image.draw(in: CGRect(origin: .zero, size: targetSize))
+            }
+            
+            // JPEG 압축 데이터 반환
+            return resizedImage.jpegData(compressionQuality: compressionQuality)
+        }
+        
         for (index, image) in selectedImages.enumerated() {
+            // Document 디렉토리에 원본 사이즈로 저장
             if let imageName = imageManager.saveImageToDisk(image: image, imageName: "review_image_\(index)_\(review.id.stringValue)") {
                 review.imagePaths.append(imageName)
+                
+                // 첫 번째 이미지를 압축하여 App Group 디렉토리에 저장
+                if index == 0 {
+                    let appGroupID = AppGroups.key
+                    if let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
+                        let fileURL = sharedContainerURL.appendingPathComponent(imageName)
+                        
+                        // App Group에 저장할 압축된 이미지 생성 (500x500 크기, 80% 품질)
+                        let targetSize = CGSize(width: 500, height: 500)
+                        let compressionQuality: CGFloat = 0.8
+                        if let compressedImageData = resizeAndCompressImage(image, targetSize: targetSize, compressionQuality: compressionQuality) {
+                            do {
+                                // App Group에 압축된 이미지 저장
+                                try compressedImageData.write(to: fileURL)
+                                postDataManager.restaurantImageDataPath = fileURL.path
+                                print(postDataManager.restaurantImageDataPath, "App Group에 압축된 첫 번째 이미지 저장")
+                            } catch {
+                                print("App Group에 압축 이미지 저장 실패: \(error)")
+                            }
+                        } else {
+                            print("이미지 압축 실패")
+                        }
+                    }
+                }
             }
         }
         reviewRepository.add(review)
+        postDataManager.restaurantName = review.restaurantName
+        postDataManager.userRating = review.rating
+        
+        // 위젯 센터 리로드
+        WidgetCenter.shared.reloadTimelines(ofKind: "RecentReviewCardWidget")
+        
         alertMessage = "리뷰가 성공적으로 저장되었습니다."
         showAlert = true
     }
@@ -429,7 +473,7 @@ struct ReviewContentView: View {
                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                 )
                 .frame(height: 150)
-//                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+            //                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
             
         }
         
@@ -455,7 +499,7 @@ struct CustomTextFieldView: View {
                 )
                 .frame(maxHeight: .infinity)
                 .frame(height: 60)
-//                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+            //                .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
         }
     }
 }

@@ -22,7 +22,15 @@
 		992205A32CAA16A600FFAC24 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992205A22CAA16A600FFAC24 /* ImageManager.swift */; };
 		992205A52CAA196500FFAC24 /* PageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992205A42CAA196500FFAC24 /* PageControl.swift */; };
 		992205A72CAA1D6400FFAC24 /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992205A62CAA1D6400FFAC24 /* Double+Extension.swift */; };
-		995E8AA92CB22A0D00C0F0D1 /* DetailViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995E8AA82CB22A0D00C0F0D1 /* DetailViewViewModel.swift */; };
+		993A70B22CE6C4E70003FA0C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 993A70552CE6C2370003FA0C /* WidgetKit.framework */; };
+		993A70B32CE6C4E70003FA0C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 993A70572CE6C2370003FA0C /* SwiftUI.framework */; };
+		993A70B62CE6C4E70003FA0C /* RecentReviewCardWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A70B52CE6C4E70003FA0C /* RecentReviewCardWidgetBundle.swift */; };
+		993A70B82CE6C4E70003FA0C /* RecentReviewCardWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A70B72CE6C4E70003FA0C /* RecentReviewCardWidget.swift */; };
+		993A70BA2CE6C4E80003FA0C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A70B92CE6C4E80003FA0C /* Assets.xcassets */; };
+		993A70BE2CE6C4E80003FA0C /* RecentReviewCardWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 993A70B12CE6C4E70003FA0C /* RecentReviewCardWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		993A70C52CE6E2AB0003FA0C /* WidgetDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A70C42CE6E2AB0003FA0C /* WidgetDataManager.swift */; };
+		993A70C72CE6E3040003FA0C /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A70C62CE6E3040003FA0C /* UserDefaults.swift */; };
+		995E8AA92CB22A0D00C0F0D1 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995E8AA82CB22A0D00C0F0D1 /* DetailViewModel.swift */; };
 		995E8AAB2CB25E2100C0F0D1 /* UserPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995E8AAA2CB25E2100C0F0D1 /* UserPostViewModel.swift */; };
 		995E8AAD2CB276A400C0F0D1 /* AddPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995E8AAC2CB276A300C0F0D1 /* AddPostViewModel.swift */; };
 		997C8B5B2CAD43D80059605D /* ColorSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997C8B5A2CAD43D80059605D /* ColorSet.swift */; };
@@ -44,6 +52,7 @@
 		997DCBF32CACC1F100D5E7F8 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997DCBF22CACC1F100D5E7F8 /* Color+Extension.swift */; };
 		997DCBF62CACC96E00D5E7F8 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997DCBF52CACC96E00D5E7F8 /* SettingView.swift */; };
 		997DCBF92CACCA7A00D5E7F8 /* UserPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997DCBF82CACCA7A00D5E7F8 /* UserPostView.swift */; };
+		99993BD82CCE58D100C19E71 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99993BD72CCE58D100C19E71 /* ChartView.swift */; };
 		99B7B38E2CB3F1F700226354 /* EditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B7B38D2CB3F1F700226354 /* EditViewModel.swift */; };
 		99BB7A212C9BEAF300B20C33 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BB7A202C9BEAF300B20C33 /* LocationManager.swift */; };
 		99BB7A232C9C09C700B20C33 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BB7A222C9C09C700B20C33 /* NetworkManager.swift */; };
@@ -61,6 +70,16 @@
 		99F132AE2C9BC08F001A63A1 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F132AD2C9BC08F001A63A1 /* CalendarView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		993A70BC2CE6C4E80003FA0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9907901A2C931AF00066920B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 993A70B02CE6C4E70003FA0C;
+			remoteInfo = RecentReviewCardWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		9907904D2C9404ED0066920B /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -71,6 +90,17 @@
 				997C8B782CAF1AE50059605D /* RealmSwift in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		993A70692CE6C2380003FA0C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				993A70BE2CE6C4E80003FA0C /* RecentReviewCardWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -92,7 +122,18 @@
 		992205A22CAA16A600FFAC24 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		992205A42CAA196500FFAC24 /* PageControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageControl.swift; sourceTree = "<group>"; };
 		992205A62CAA1D6400FFAC24 /* Double+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
-		995E8AA82CB22A0D00C0F0D1 /* DetailViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewViewModel.swift; sourceTree = "<group>"; };
+		993A70552CE6C2370003FA0C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		993A70572CE6C2370003FA0C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		993A70B12CE6C4E70003FA0C /* RecentReviewCardWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RecentReviewCardWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		993A70B52CE6C4E70003FA0C /* RecentReviewCardWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentReviewCardWidgetBundle.swift; sourceTree = "<group>"; };
+		993A70B72CE6C4E70003FA0C /* RecentReviewCardWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentReviewCardWidget.swift; sourceTree = "<group>"; };
+		993A70B92CE6C4E80003FA0C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		993A70BB2CE6C4E80003FA0C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		993A70C22CE6E00A0003FA0C /* FoodieLogDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FoodieLogDebug.entitlements; sourceTree = "<group>"; };
+		993A70C42CE6E2AB0003FA0C /* WidgetDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataManager.swift; sourceTree = "<group>"; };
+		993A70C62CE6E3040003FA0C /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
+		993A70CA2CE7259D0003FA0C /* RecentReviewCardWidgetExtensionDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecentReviewCardWidgetExtensionDebug.entitlements; sourceTree = "<group>"; };
+		995E8AA82CB22A0D00C0F0D1 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
 		995E8AAA2CB25E2100C0F0D1 /* UserPostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPostViewModel.swift; sourceTree = "<group>"; };
 		995E8AAC2CB276A300C0F0D1 /* AddPostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPostViewModel.swift; sourceTree = "<group>"; };
 		997C8B5A2CAD43D80059605D /* ColorSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSet.swift; sourceTree = "<group>"; };
@@ -112,6 +153,7 @@
 		997DCBF22CACC1F100D5E7F8 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
 		997DCBF52CACC96E00D5E7F8 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		997DCBF82CACCA7A00D5E7F8 /* UserPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPostView.swift; sourceTree = "<group>"; };
+		99993BD72CCE58D100C19E71 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		99B7B38D2CB3F1F700226354 /* EditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewModel.swift; sourceTree = "<group>"; };
 		99BB7A202C9BEAF300B20C33 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		99BB7A222C9C09C700B20C33 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -139,14 +181,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		993A70AE2CE6C4E70003FA0C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				993A70B32CE6C4E70003FA0C /* SwiftUI.framework in Frameworks */,
+				993A70B22CE6C4E70003FA0C /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		990790192C931AF00066920B = {
 			isa = PBXGroup;
 			children = (
+				993A70CA2CE7259D0003FA0C /* RecentReviewCardWidgetExtensionDebug.entitlements */,
 				990790332C931BFB0066920B /* .gitignore */,
 				990790242C931AF00066920B /* FoodieLog */,
+				993A70B42CE6C4E70003FA0C /* RecentReviewCardWidget */,
+				993A70542CE6C2370003FA0C /* Frameworks */,
 				990790232C931AF00066920B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -155,6 +209,7 @@
 			isa = PBXGroup;
 			children = (
 				990790222C931AF00066920B /* FoodieLog.app */,
+				993A70B12CE6C4E70003FA0C /* RecentReviewCardWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -162,6 +217,9 @@
 		990790242C931AF00066920B /* FoodieLog */ = {
 			isa = PBXGroup;
 			children = (
+				993A70C32CE6E29B0003FA0C /* UserDefaults */,
+				993A70C22CE6E00A0003FA0C /* FoodieLogDebug.entitlements */,
+				993A704E2CE6C17A0003FA0C /* Widget */,
 				997C8B7B2CB173340059605D /* Protocol */,
 				997C8B6A2CAF05E30059605D /* LaunchScreen */,
 				99D7B1F92CAD0575007E3C69 /* Navigation */,
@@ -198,6 +256,7 @@
 		990790382C931C930066920B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				99993BD62CCE58C100C19E71 /* ChartView */,
 				99C74A0E2CC24A3F006E5750 /* SplashView */,
 				997DCBF72CACCA6100D5E7F8 /* UserPost */,
 				997DCBF42CACC96500D5E7F8 /* Setting */,
@@ -239,6 +298,42 @@
 				99C74A0C2CC244F8006E5750 /* RealmManager.swift */,
 			);
 			path = DB;
+			sourceTree = "<group>";
+		};
+		993A704E2CE6C17A0003FA0C /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Widget;
+			sourceTree = "<group>";
+		};
+		993A70542CE6C2370003FA0C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				993A70552CE6C2370003FA0C /* WidgetKit.framework */,
+				993A70572CE6C2370003FA0C /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		993A70B42CE6C4E70003FA0C /* RecentReviewCardWidget */ = {
+			isa = PBXGroup;
+			children = (
+				993A70B52CE6C4E70003FA0C /* RecentReviewCardWidgetBundle.swift */,
+				993A70B72CE6C4E70003FA0C /* RecentReviewCardWidget.swift */,
+				993A70B92CE6C4E80003FA0C /* Assets.xcassets */,
+				993A70BB2CE6C4E80003FA0C /* Info.plist */,
+			);
+			path = RecentReviewCardWidget;
+			sourceTree = "<group>";
+		};
+		993A70C32CE6E29B0003FA0C /* UserDefaults */ = {
+			isa = PBXGroup;
+			children = (
+				993A70C42CE6E2AB0003FA0C /* WidgetDataManager.swift */,
+				993A70C62CE6E3040003FA0C /* UserDefaults.swift */,
+			);
+			path = UserDefaults;
 			sourceTree = "<group>";
 		};
 		997C8B6A2CAF05E30059605D /* LaunchScreen */ = {
@@ -287,6 +382,14 @@
 			path = UserPost;
 			sourceTree = "<group>";
 		};
+		99993BD62CCE58C100C19E71 /* ChartView */ = {
+			isa = PBXGroup;
+			children = (
+				99993BD72CCE58D100C19E71 /* ChartView.swift */,
+			);
+			path = ChartView;
+			sourceTree = "<group>";
+		};
 		99BB7A1C2C9BDDFE00B20C33 /* UpdateLocation */ = {
 			isa = PBXGroup;
 			children = (
@@ -332,7 +435,7 @@
 				992205912CA54A8700FFAC24 /* DetailView.swift */,
 				997C8B5E2CAE39610059605D /* EditView.swift */,
 				997C8B622CAE6A070059605D /* DetailViewHorizontalScrollView.swift */,
-				995E8AA82CB22A0D00C0F0D1 /* DetailViewViewModel.swift */,
+				995E8AA82CB22A0D00C0F0D1 /* DetailViewModel.swift */,
 				99B7B38D2CB3F1F700226354 /* EditViewModel.swift */,
 			);
 			path = DetailView;
@@ -394,10 +497,12 @@
 				9907901F2C931AF00066920B /* Frameworks */,
 				990790202C931AF00066920B /* Resources */,
 				9907904D2C9404ED0066920B /* Embed Frameworks */,
+				993A70692CE6C2380003FA0C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				993A70BD2CE6C4E80003FA0C /* PBXTargetDependency */,
 			);
 			name = FoodieLog;
 			packageProductDependencies = (
@@ -407,6 +512,23 @@
 			productName = FoodieLog;
 			productReference = 990790222C931AF00066920B /* FoodieLog.app */;
 			productType = "com.apple.product-type.application";
+		};
+		993A70B02CE6C4E70003FA0C /* RecentReviewCardWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 993A70BF2CE6C4E80003FA0C /* Build configuration list for PBXNativeTarget "RecentReviewCardWidgetExtension" */;
+			buildPhases = (
+				993A70AD2CE6C4E70003FA0C /* Sources */,
+				993A70AE2CE6C4E70003FA0C /* Frameworks */,
+				993A70AF2CE6C4E70003FA0C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RecentReviewCardWidgetExtension;
+			productName = RecentReviewCardWidgetExtension;
+			productReference = 993A70B12CE6C4E70003FA0C /* RecentReviewCardWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -419,6 +541,9 @@
 				LastUpgradeCheck = 1530;
 				TargetAttributes = {
 					990790212C931AF00066920B = {
+						CreatedOnToolsVersion = 15.3;
+					};
+					993A70B02CE6C4E70003FA0C = {
 						CreatedOnToolsVersion = 15.3;
 					};
 				};
@@ -441,6 +566,7 @@
 			projectRoot = "";
 			targets = (
 				990790212C931AF00066920B /* FoodieLog */,
+				993A70B02CE6C4E70003FA0C /* RecentReviewCardWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -453,6 +579,14 @@
 				9907902D2C931AF10066920B /* Preview Assets.xcassets in Resources */,
 				990790342C931BFB0066920B /* .gitignore in Resources */,
 				9907902A2C931AF10066920B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		993A70AF2CE6C4E70003FA0C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				993A70BA2CE6C4E80003FA0C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,6 +604,7 @@
 				997C8B652CAE70880059605D /* PrivacyPolicyView.swift in Sources */,
 				997C8B5F2CAE39610059605D /* EditView.swift in Sources */,
 				992205902CA5454F00FFAC24 /* MapView.swift in Sources */,
+				99993BD82CCE58D100C19E71 /* ChartView.swift in Sources */,
 				99D7B1FB2CAD0580007E3C69 /* NavigationDestination.swift in Sources */,
 				99B7B38E2CB3F1F700226354 /* EditViewModel.swift in Sources */,
 				99BB7A7B2CA3E23A00B20C33 /* View+Extension.swift in Sources */,
@@ -500,19 +635,38 @@
 				997DCBF32CACC1F100D5E7F8 /* Color+Extension.swift in Sources */,
 				992205922CA54A8700FFAC24 /* DetailView.swift in Sources */,
 				9922059F2CA9843E00FFAC24 /* Review.swift in Sources */,
+				993A70C52CE6E2AB0003FA0C /* WidgetDataManager.swift in Sources */,
 				99F132AB2C987469001A63A1 /* HomeTabView.swift in Sources */,
+				993A70C72CE6E3040003FA0C /* UserDefaults.swift in Sources */,
 				997C8B5D2CAE03450059605D /* UINavigationController+Extension.swift in Sources */,
 				997C8B632CAE6A070059605D /* DetailViewHorizontalScrollView.swift in Sources */,
 				990790412C9322CF0066920B /* FoodCardView.swift in Sources */,
 				997DCBEE2CAC7EEC00D5E7F8 /* LocationView.swift in Sources */,
 				995E8AAD2CB276A400C0F0D1 /* AddPostViewModel.swift in Sources */,
 				99BB7A782CA2A50A00B20C33 /* SearchRestaurantsView.swift in Sources */,
-				995E8AA92CB22A0D00C0F0D1 /* DetailViewViewModel.swift in Sources */,
+				995E8AA92CB22A0D00C0F0D1 /* DetailViewModel.swift in Sources */,
 				990790262C931AF00066920B /* FoodieLogApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		993A70AD2CE6C4E70003FA0C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				993A70B82CE6C4E70003FA0C /* RecentReviewCardWidget.swift in Sources */,
+				993A70B62CE6C4E70003FA0C /* RecentReviewCardWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		993A70BD2CE6C4E80003FA0C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 993A70B02CE6C4E70003FA0C /* RecentReviewCardWidgetExtension */;
+			targetProxy = 993A70BC2CE6C4E80003FA0C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		9907902E2C931AF10066920B /* Debug */ = {
@@ -637,8 +791,10 @@
 		990790312C931AF10066920B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FoodieLog/FoodieLogDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FoodieLog/Preview Content\"";
@@ -659,7 +815,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yw.FoodieLog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -675,6 +831,7 @@
 		990790322C931AF10066920B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -697,7 +854,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yw.FoodieLog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -707,6 +864,63 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		993A70C02CE6C4E80003FA0C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = RecentReviewCardWidgetExtensionDebug.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Y2VDXSZQ3M;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecentReviewCardWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RecentReviewCardWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yw.FoodieLog.RecentReviewCardWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		993A70C12CE6C4E80003FA0C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Y2VDXSZQ3M;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecentReviewCardWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RecentReviewCardWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yw.FoodieLog.RecentReviewCardWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -727,6 +941,15 @@
 			buildConfigurations = (
 				990790312C931AF10066920B /* Debug */,
 				990790322C931AF10066920B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		993A70BF2CE6C4E80003FA0C /* Build configuration list for PBXNativeTarget "RecentReviewCardWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				993A70C02CE6C4E80003FA0C /* Debug */,
+				993A70C12CE6C4E80003FA0C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

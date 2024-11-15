@@ -44,7 +44,7 @@ final class ImageManager {
             
             return images
         }
-    private func getDocumentsDirectory() -> URL {
+     func getDocumentsDirectory() -> URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
     func deleteImageFromDisk(imageName: String) {
